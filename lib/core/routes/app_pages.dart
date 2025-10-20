@@ -1,3 +1,4 @@
+import 'package:flutter_cleancare/pages/change_password_page.dart';
 import 'package:flutter_cleancare/pages/forgot_password_page.dart';
 import 'package:flutter_cleancare/pages/login_page.dart';
 import 'package:flutter_cleancare/pages/main_page.dart';
@@ -12,5 +13,6 @@ class AppPages {
     GetPage(name: Routes.main, page: () => MainPage()),
     GetPage(name: Routes.register, page: () => RegisterPage()),
     GetPage(name: Routes.forgotPassword, page: () => ForgotPasswordPage()),
+    GetPage(name: Routes.changePassword, page: () => ChangePasswordPage()),
   ];
 }

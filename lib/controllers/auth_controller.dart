@@ -1,4 +1,5 @@
 import 'package:flutter_cleancare/pages/main_page.dart';
+import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
 import 'package:flutter_cleancare/data/models/user_model.dart';
 import 'package:flutter_cleancare/data/repositories/auth_repository.dart';
@@ -22,6 +23,7 @@ class AuthController extends GetxController {
   void logout() {
     currentUser.value = null;
     Get.offAllNamed('/login');
+    AppSnackbarRaw.success('Kamu telah logout dari aplikasi.');
   }
 
   void togglePassword() {

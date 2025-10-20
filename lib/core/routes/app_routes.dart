@@ -5,4 +5,5 @@ abstract class Routes {
   static const main = '/main';
   static const register = '/register';
   static const forgotPassword = '/forgot-password';
+  static const changePassword = '/change-password';
 }

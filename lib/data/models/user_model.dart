@@ -7,5 +7,9 @@ class User {
     required this.userId,
     required this.password,
     required this.role,
+    required String id,
+    required String name,
+    required String email,
+    required String status,
   });
 }

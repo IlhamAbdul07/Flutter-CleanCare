@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/core/bindings/initial_binding.dart';
 import 'package:flutter_cleancare/core/routes/app_pages.dart';
-import 'package:flutter_cleancare/core/services/storage_sercive.dart';
+import 'package:flutter_cleancare/core/services/storage_service.dart';
 import 'package:get/get.dart';
 
 Future<void> main() async {

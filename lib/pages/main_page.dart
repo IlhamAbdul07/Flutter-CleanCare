@@ -81,21 +81,17 @@ class MainPage extends StatelessWidget {
           builder: (context) {
             SizeConfig.init(context);
 
-            final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-            final iconSize = (SizeConfig.width * 0.06).clamp(22.0, 32.0);
-            final fontSize = (SizeConfig.width * 0.03).clamp(10.0, 14.0);
+            final iconSize = (SizeConfig.width * 0.1).clamp(22.0, 32.0);
+            final fontSize = (SizeConfig.width * 0.1).clamp(10.0, 14.0);
 
             return Container(
-              padding: EdgeInsets.only(
-                bottom: bottomPadding > 0 ? bottomPadding : 8,
-              ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: const Offset(0, -2),
+                    color: Colors.black.withOpacity(1),
+                    blurRadius: 5,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),

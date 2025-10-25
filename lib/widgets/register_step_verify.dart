@@ -39,12 +39,12 @@ class RegisterStepVerifyWidget extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(height: 12),
-                            const Text(
+                            Text(
                               "Clean Care",
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -80,7 +80,7 @@ class RegisterStepVerifyWidget extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Text(
-                                'REGISTER',
+                                'Verifikasi Nomor ID',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 25,
@@ -98,7 +98,7 @@ class RegisterStepVerifyWidget extends StatelessWidget {
                                   controller: idC,
                                   style: const TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
-                                    hintText: 'Employee ID',
+                                    hintText: 'Nomor ID',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(8),

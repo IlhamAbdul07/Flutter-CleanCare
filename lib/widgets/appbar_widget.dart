@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cleancare/core/theme/app_color.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppbarWidget({super.key});
@@ -7,7 +6,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       centerTitle: true,
       leading: null,
       elevation: 0,
@@ -17,10 +16,10 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Image.asset('assets/images/logo.png', height: 40, width: 40),
           const SizedBox(width: 8),
-          const Text(
+          Text(
             'Clean Care',
             style: TextStyle(
-              color: AppColor.primary,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

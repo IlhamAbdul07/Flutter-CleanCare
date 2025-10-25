@@ -1,4 +1,4 @@
-class Users {
+class UserSingle {
   final String id;
   final String numberId;
   final String name;
@@ -9,9 +9,8 @@ class Users {
   final String roleName;
   final String createdAt;
   final String updatedAt;
-  final bool verified;
 
-  const Users({
+  const UserSingle({
     required this.id,
     required this.numberId,
     required this.name,
@@ -22,11 +21,10 @@ class Users {
     required this.roleName,
     required this.createdAt,
     required this.updatedAt,
-    required this.verified,
   });
 
-  factory Users.fromJson(Map<String, dynamic> json) {
-    return Users(
+  factory UserSingle.fromJson(Map<String, dynamic> json) {
+    return UserSingle(
       id: json['id']?.toString() ?? '',
       numberId: json['number_id']?.toString() ?? '',
       name: json['name'] ?? '',
@@ -37,7 +35,6 @@ class Users {
       roleName: json['role']?['name'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
-      verified: json['verified'] ?? false,
     );
   }
 
@@ -53,7 +50,6 @@ class Users {
       'role_name': roleName,
       'created_at': createdAt,
       'updated_at': updatedAt,
-      'verified': verified,
     };
   }
 }

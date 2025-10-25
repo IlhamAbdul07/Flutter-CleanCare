@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:get/get.dart';
@@ -36,12 +38,12 @@ class RegisterStepFormWidget extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(height: 12),
-                            const Text(
+                            Text(
                               "Clean Care",
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -89,7 +91,7 @@ class RegisterStepFormWidget extends StatelessWidget {
                             //ID
                             const SizedBox(height: 10),
                             Text(
-                              'Employee ID',
+                              'Nomor ID',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -104,14 +106,15 @@ class RegisterStepFormWidget extends StatelessWidget {
                               height: 50,
                               child: TextField(
                                 controller: TextEditingController(
-                                  text: c.employeeData.value?.userId ?? '',
+                                  text: c.employeeData.value?.numberId ?? '',
                                 ),
                                 readOnly: true,
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -139,8 +142,9 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -162,14 +166,15 @@ class RegisterStepFormWidget extends StatelessWidget {
                               height: 50,
                               child: TextField(
                                 controller: TextEditingController(
-                                  text: c.employeeData.value?.role ?? '',
+                                  text: (c.employeeData.value?.roleName ?? '') == 'Admin' ? 'Supervisor' : 'Cleaning Service',
                                 ),
                                 readOnly: true,
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -191,12 +196,28 @@ class RegisterStepFormWidget extends StatelessWidget {
                               height: 50,
                               child: TextField(
                                 controller: emailC,
+                                onChanged: (_) {
+                                    c.emailError.value = '';
+                                  },
                                 decoration: const InputDecoration(
                                   hintText: 'Masukkan email anda',
                                   border: OutlineInputBorder(),
                                 ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
+                            Obx(() => c.emailError.value.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 6, left: 4),
+                                    child: Text(
+                                      c.emailError.value,
+                                      style: const TextStyle(color: Colors.red, fontSize: 13),
+                                    ),
+                                  )
+                                : const SizedBox()),
                             // Password
                             const SizedBox(height: 15),
                             Text(
@@ -217,6 +238,9 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 () => TextField(
                                   obscureText: c.obscurePassword.value,
                                   controller: passwordC,
+                                  onChanged: (_) {
+                                    c.passwordError.value = '';
+                                  },
                                   decoration: InputDecoration(
                                     border: const OutlineInputBorder(),
                                     hintText: 'Masukkan password',
@@ -226,12 +250,30 @@ class RegisterStepFormWidget extends StatelessWidget {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                       ),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                       onPressed: c.togglePassword,
                                     ),
+                                  ),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                               ),
                             ),
+                            Obx(() => c.passwordError.value.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 6, left: 4),
+                                    child: Text(
+                                      c.passwordError.value,
+                                      style: const TextStyle(color: Colors.red, fontSize: 13),
+                                    ),
+                                  )
+                                : const SizedBox()),
                             // PasswordConfirm
                             const SizedBox(height: 20),
                             Text(
@@ -252,6 +294,9 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 () => TextField(
                                   obscureText: c.obscurePassword.value,
                                   controller: passwordCC,
+                                  onChanged: (_) {
+                                    c.passwordError.value = '';
+                                  },
                                   decoration: InputDecoration(
                                     border: const OutlineInputBorder(),
                                     hintText: 'Masukkan kembali password',
@@ -261,12 +306,88 @@ class RegisterStepFormWidget extends StatelessWidget {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                       ),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                       onPressed: c.togglePassword,
                                     ),
+                                  ),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                               ),
                             ),
+                            Obx(() => c.confirmPasswordError.value.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 6, left: 4),
+                                    child: Text(
+                                      c.confirmPasswordError.value,
+                                      style: const TextStyle(color: Colors.red, fontSize: 13),
+                                    ),
+                                  )
+                                : const SizedBox()),
+                            // FOTO PROFIL (WAJIB)
+                            const SizedBox(height: 20),
+                            Text(
+                              'Foto Profil',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            const SizedBox(height: 8),
+                            Obx(() => GestureDetector(
+                                  onTap: () => c.pickImage(),
+                                  child: Container(
+                                    height: 140,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: c.photoError.value.isNotEmpty
+                                            ? Colors.red
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: c.selectedImage.value != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Image.file(
+                                              File(c.selectedImage.value!.path),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : const Center(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.upload_file, size: 40),
+                                                SizedBox(height: 6),
+                                                Text(
+                                                  'Pilih Foto Profil',
+                                                  style: TextStyle(color: Colors.black54),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                  ),
+                                )),
+                            Obx(() => c.photoError.value.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 6, left: 4),
+                                    child: Text(
+                                      c.photoError.value,
+                                      style:
+                                          const TextStyle(color: Colors.red, fontSize: 13),
+                                    ),
+                                  )
+                                : const SizedBox()),
                             //Button Daftar
                             const SizedBox(height: 20),
                             SizedBox(
@@ -274,10 +395,14 @@ class RegisterStepFormWidget extends StatelessWidget {
                               height: 50,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  c.employeeData.value?.name;
-                                  c.employeeData.value?.userId;
-                                  c.employeeData.value?.role;
-                                  c.register(emailC.text, passwordC.text);
+                                  final isValid = c.validate(emailC.text, passwordC.text, passwordCC.text);
+                                  if (isValid) {
+                                    if (c.selectedImage.value == null) {
+                                      c.photoError.value = 'Foto profil wajib diisi';
+                                      return;
+                                    }
+                                    c.register(c.employeeData.value!.numberId, emailC.text, passwordC.text, c.selectedImage.value);
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColor.primaryBlue,
@@ -295,7 +420,47 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 30),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Kembali ke ',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                InkWell(
+                                  onTap: c.backToStep1,
+                                  child: const Text(
+                                    'Verifikasi Nomor ID',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.white,
+                                    thickness: 1,
+                                    endIndent: 10, // jarak dari teks
+                                  ),
+                                ),
+                                Text("atau", style: TextStyle(color: Colors.white)),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.white,
+                                    thickness: 1,
+                                    indent: 10, // jarak dari teks
+                                  ),
+                                ),
+                              ],
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

@@ -60,6 +60,20 @@ class JobController extends GetxController {
     return grouped;
   }
 
+  // 🔹 Ambil semua cleaning jobs berdasarkan floor
+  List<Job> getCleaningJobsByFloor(int floor) {
+    return jobs
+        .where((j) => j.jobType == 'cleaning' && j.floor == floor)
+        .toList();
+  }
+
+  // 🔹 Ambil semua non-cleaning jobs berdasarkan worker
+  List<Job> getNonCleaningJobsByWorker(String workerName) {
+    return jobs
+        .where((j) => j.jobType == 'non-cleaning' && j.workerName == workerName)
+        .toList();
+  }
+
   // 🔹 Filter berdasarkan tanggal (optional, buat filter ke depan)
   var selectedDate = Rxn<DateTime>(); // Rxn artinya nullable observable
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
+import 'package:flutter_cleancare/controllers/theme_controller.dart';
+import 'package:flutter_cleancare/core/routes/app_pages.dart';
 import 'package:flutter_cleancare/widgets/app_dialog.dart';
 import 'package:get/get.dart';
 
@@ -9,16 +11,28 @@ class StaffProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authC = Get.find<AuthController>();
+    final themeC = Get.find<ThemeController>();
+
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.background,),
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           Column(
             children: [
-              CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: (authC.currentUser.value?.profile != null &&
+                        authC.currentUser.value!.profile.isNotEmpty)
+                    ? NetworkImage(authC.currentUser.value!.profile)
+                    : null,
+                child: (authC.currentUser.value?.profile == null ||
+                        authC.currentUser.value!.profile.isEmpty)
+                    ? const Icon(Icons.person, size: 50)
+                    : null,
+              ),
               const SizedBox(height: 10),
-              const Text('ID: 10384530324823', style: TextStyle(fontSize: 15)),
+              Text('ID: ${authC.currentUser.value?.numberId}', style: TextStyle(fontSize: 15)),
             ],
           ),
           const SizedBox(height: 20),
@@ -29,7 +43,7 @@ class StaffProfilePage extends StatelessWidget {
               'User',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('Alif Aulia'),
+            subtitle: Text('${authC.currentUser.value?.name}'),
           ),
           ListTile(
             leading: const Icon(Icons.badge),
@@ -37,15 +51,15 @@ class StaffProfilePage extends StatelessWidget {
               'Role',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('Staffs'),
+            subtitle: Text(authC.isAdmin ? 'Supervisor' : 'Cleaning Service'),
           ),
           ListTile(
             leading: const Icon(Icons.business),
             title: const Text(
-              'Divisi',
+              'Pest Control',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('Cleaning Service'),
+            subtitle: Text(authC.currentUser.value!.name.contains('(Pest Control)') ? 'Yes' : 'No'),
           ),
           ListTile(
             leading: const Icon(Icons.email),
@@ -53,22 +67,28 @@ class StaffProfilePage extends StatelessWidget {
               'Email',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text('alif123@gmail.com'),
+            subtitle: Text('${authC.currentUser.value?.email}'),
           ),
           Divider(color: Colors.grey[300]),
           const SizedBox(height: 20),
-          ListTile(
-            leading: const Icon(Icons.color_lens_rounded),
-            title: const Text('Ubah Tema'),
-            onTap: () {
-              // Navigate to edit profile page
-            },
+          Obx(
+            () => ListTile(
+              leading: const Icon(Icons.color_lens_rounded),
+              title: const Text('Ubah Tema'),
+              trailing: Icon(
+                themeC.isDarkMode.value
+                    ? Icons.dark_mode_rounded
+                    : Icons.light_mode_rounded,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onTap: themeC.toggleTheme,
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.lock_reset_rounded),
             title: const Text('Ubah Password'),
             onTap: () {
-              Navigator.pushNamed(context, '/change-password');
+              Navigator.pushNamed(context, Routes.changePassword);
             },
           ),
           ListTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cleancare/core/services/api_service.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 
@@ -127,10 +128,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   width: double.infinity,
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      AppSnackbarRaw.success(
-                                        'Email Berhasil Dikirim!',
-                                      );
+                                    onPressed: () async {
+                                      final response = await ApiService.sendForgotPasswordEmail(emailC.text);
+                                      if (response != null && response['success'] == true) {
+                                        Navigator.of(context).pop();
+                                        AppSnackbarRaw.success('Permintaan Reset Password Telah dikirim ke Email kamu, mohon cek folder spam jika tidak ada di kontak masuk.');
+                                      } else {
+                                        AppSnackbarRaw.error('Email Tidak Terdaftar.');
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColor.primaryBlue,

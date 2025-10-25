@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/main_controller.dart';
-import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/core/theme/size_config.dart';
 import 'package:flutter_cleancare/pages/admin_home_page.dart';
 import 'package:flutter_cleancare/pages/admin_profile_page.dart';
@@ -38,11 +37,10 @@ class MainPage extends StatelessWidget {
         return const Scaffold(body: Center(child: Text('No user.')));
       }
 
-      final isAdmin = currentUser.role == 'admin';
-      final pages = isAdmin ? adminPages : staffPages;
+      final pages = authC.isAdmin ? adminPages : staffPages;
 
       // Build BottomNavigationBar items depending on role
-      final items = isAdmin
+      final items = authC.isAdmin
           ? const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Users'),
@@ -66,17 +64,31 @@ class MainPage extends StatelessWidget {
 
       return Scaffold(
         appBar: AppbarWidget(),
-        // AppBar(
-        //   title: Text('Welcome, ${currentUser.userId} (${currentUser.role})'),
-        //   actions: [
-        //     IconButton(
-        //       onPressed: () => authC.logout(),
-        //       icon: const Icon(Icons.logout),
-        //       tooltip: 'Logout',
-        //     ),
-        //   ],
-        // ),
-        body: pages[mainC.index.value],
+        body: Obx(() {
+          final currentPageIndex = mainC.index.value;
+
+          if (authC.isAdmin) {
+            switch (currentPageIndex) {
+              case 0:
+                return const AdminHomePage();
+              case 1:
+                return const UserManagementPage();
+              case 2:
+                return const AdminProfilePage();
+              default:
+                return const AdminHomePage();
+            }
+          } else {
+            switch (currentPageIndex) {
+              case 0:
+                return const StaffHomePage();
+              case 1:
+                return const StaffProfilePage();
+              default:
+                return const StaffHomePage();
+            }
+          }
+        }),
         bottomNavigationBar: Builder(
           builder: (context) {
             SizeConfig.init(context);
@@ -86,7 +98,7 @@ class MainPage extends StatelessWidget {
 
             return Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.background,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(1),
@@ -97,9 +109,11 @@ class MainPage extends StatelessWidget {
               ),
               child: Obx(
                 () => BottomNavigationBar(
-                  backgroundColor: Colors.white,
-                  selectedItemColor: AppColor.primary,
-                  unselectedItemColor: AppColor.secondaryVariant,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  selectedItemColor: Theme.of(context).colorScheme.primary,
+                  unselectedItemColor: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                   showSelectedLabels: false,
                   showUnselectedLabels: false,
                   currentIndex: mainC.index.value,

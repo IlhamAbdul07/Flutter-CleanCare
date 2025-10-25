@@ -1,7 +1,6 @@
 // lib/pages/admin/non_cleaning_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/data/models/job_model.dart';
-import 'package:flutter_cleancare/data/repositories/job_repository.dart';
 import 'package:get/get.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 

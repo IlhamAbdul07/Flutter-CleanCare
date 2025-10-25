@@ -10,6 +10,8 @@ class StaffJobController extends GetxController {
   RxList<StaffJobModel> cleaningSummary = <StaffJobModel>[].obs;
   RxList<StaffJobModel> nonCleaningSummary = <StaffJobModel>[].obs;
 
+  var jobs = <StaffJobModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -20,6 +22,12 @@ class StaffJobController extends GetxController {
     final all = _repo.getAllJobs();
     cleaningSummary.assignAll(all.where((e) => e.jobType == 'Cleaning'));
     nonCleaningSummary.assignAll(all.where((e) => e.jobType == 'Non-Cleaning'));
+    jobs.value = all;
+  }
+
+  // 🔹 Ganti mode tampilan Cleaning / Non-Cleaning
+  void setCleaning(bool value) {
+    isCleaning.value = value;
   }
 
   void addJob({

@@ -5,7 +5,7 @@ class JobRepository {
   final List<Job> _jobs = const [
     Job(
       workerName: "Andi",
-      jobType: "Mengepel",
+      jobType: "cleaning",
       floor: 1,
       description: "cleaning",
       isCleaning: true,
@@ -19,28 +19,28 @@ class JobRepository {
     ),
     Job(
       workerName: "Citra",
-      jobType: "Membersihkan kaca",
+      jobType: "cleaning",
       floor: 2,
-      description: "Lobby depan",
+      description: "non-cleaning",
       isCleaning: true,
     ),
     Job(
       workerName: "Dian",
-      jobType: "Perbaikan lampu",
+      jobType: "non-cleaning",
       floor: 2,
       description: "Ruang rapat",
       isCleaning: false,
     ),
     Job(
       workerName: "Eko",
-      jobType: "Service AC",
+      jobType: "non-cleaning",
       floor: 3,
       description: "Ruang meeting",
       isCleaning: false,
     ),
     Job(
       workerName: "Andi",
-      jobType: "Poles lantai",
+      jobType: "non-cleaning",
       floor: 1,
       description: "Lorong timur",
       isCleaning: true,

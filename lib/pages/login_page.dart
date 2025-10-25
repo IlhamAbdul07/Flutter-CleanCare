@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
                   'Clean Care',
                   style: TextStyle(
                     fontSize: 32,
-                    color: AppColor.primary,
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
                       controller: userC,
                       style: const TextStyle(color: Colors.black),
                       decoration: const InputDecoration(
-                        hintText: 'Employee ID',
+                        hintText: 'Nomor ID',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
@@ -99,6 +99,7 @@ class LoginPage extends StatelessWidget {
                       height: 50,
                       child: TextField(
                         controller: passC,
+                        style: const TextStyle(color: Colors.black),
                         obscureText: loginC.obscurePassword.value,
                         decoration: InputDecoration(
                           hintText: 'Password',
@@ -110,6 +111,7 @@ class LoginPage extends StatelessWidget {
                               loginC.obscurePassword.value
                                   ? Icons.visibility_off
                                   : Icons.visibility,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             onPressed: loginC.togglePassword,
                           ),

@@ -45,7 +45,7 @@ class StaffJobRepository {
     StaffJobModel(
       id: 'J006',
       jobName: 'Perbaikan AC',
-      jobType: 'Maintenance',
+      jobType: 'Non-Cleaning',
       location: 'Gedung B - Lantai 2',
       completedAt: DateTime(2025, 10, 16, 11, 00),
       notes: 'Pemeriksaan dan perbaikan unit AC',
@@ -53,7 +53,7 @@ class StaffJobRepository {
     StaffJobModel(
       id: 'J007',
       jobName: 'Perbaikan Listrik',
-      jobType: 'Maintenance',
+      jobType: 'Non-Cleaning',
       location: 'Gedung A - Lantai 4',
       completedAt: DateTime(2025, 10, 16, 13, 00),
       notes: 'Pengecekan instalasi listrik',
@@ -61,15 +61,15 @@ class StaffJobRepository {
     StaffJobModel(
       id: 'J008',
       jobName: 'Perbaikan Lift',
-      jobType: 'Maintenance',
+      jobType: 'Non-Cleaning',
       location: 'Gedung B',
       completedAt: DateTime(2025, 10, 16, 14, 00),
-      notes: 'Maintenance rutin lift utama',
+      notes: 'non-cleaning rutin lift utama',
     ),
     StaffJobModel(
       id: 'J009',
       jobName: 'Perbaikan Plumbing',
-      jobType: 'Maintenance',
+      jobType: 'Non-Cleaning',
       location: 'Gedung A - Lantai 2',
       completedAt: DateTime(2025, 10, 16, 15, 00),
       notes: 'Perbaikan sistem pemipaan',
@@ -77,7 +77,7 @@ class StaffJobRepository {
     StaffJobModel(
       id: 'J010',
       jobName: 'Perbaikan Pintu',
-      jobType: 'Maintenance',
+      jobType: 'Non-Cleaning',
       location: 'Gedung B - Lantai 1',
       completedAt: DateTime(2025, 10, 16, 16, 00),
       notes: 'Perbaikan pintu otomatis lobby',

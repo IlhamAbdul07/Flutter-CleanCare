@@ -19,27 +19,27 @@ class AdminHomePage extends StatelessWidget {
         return const Scaffold(body: Center(child: Text('No user.')));
       }
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.background,
           elevation: 0,
           titleSpacing: 16,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Dashboard',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 26,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Welcome, ${currentUser.userId} (${currentUser.role})',
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
+                'Welcome, ${currentUser.name} (${currentUser.roleName})',
+                style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.primary,),
               ),
             ],
           ),

@@ -132,6 +132,8 @@ class DetailUserPage extends StatelessWidget {
                                   final result = await Get.to(() => EditUserPage(userId: user.id));
                                   if (result == true) {
                                     userC.getById(int.parse(userId));
+                                  }else{
+                                    userC.getById(int.parse(userId));
                                   }
                                 },
                                 icon: const Icon(Icons.edit),

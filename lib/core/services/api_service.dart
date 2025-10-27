@@ -280,6 +280,7 @@ class ApiService {
     Map<String, dynamic>? data,
     String? contentType = "application/json",
     Map<String, String>? params,
+    List<http.MultipartFile> listFile = const [],
   }) async {
     final token = StorageService.getToken();
 
@@ -303,6 +304,7 @@ class ApiService {
       endpoint: endpoint,
       body: data,
       token: token,
+      listFile: listFile,
       contentType: contentType!,
     );
 

@@ -1,15 +1,13 @@
-// import 'package:flutter_cleancare/data/models/user_model.dart';
 import 'dart:io';
-
 import 'package:flutter_cleancare/core/services/api_service.dart';
 import 'package:flutter_cleancare/data/models/users_single_model.dart';
-// import 'package:flutter_cleancare/data/repositories/user_repository.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
 import 'package:flutter_cleancare/data/models/users_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 class UserController extends GetxController {
   // final UserRepository _repo = UserRepository();
@@ -189,12 +187,19 @@ class UserController extends GetxController {
     profilC.value = '';
   }
 
-  Future<String> updateById(int id, Map<String, dynamic> data) async {
+  Future<String> updateById(int id, Map<String, dynamic> data, XFile? profile, String contentType) async {
+    final List<http.MultipartFile> files = [];
+    if (profile != null) {
+      final file = await http.MultipartFile.fromPath('profile', profile.path);
+      files.add(file);
+    }
+
     final response = await ApiService.handleUser(
       method: 'PUT',
       userId: id,
       data: data,
-      contentType: 'multipart/form-data'
+      listFile: files,
+      contentType: contentType
     );
 
     if (response != null && response['success'] == true) {

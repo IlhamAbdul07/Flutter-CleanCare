@@ -5,6 +5,7 @@ import 'package:flutter_cleancare/controllers/users_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditUserPage extends StatelessWidget {
   final String userId;
@@ -152,7 +153,7 @@ class EditUserPage extends StatelessWidget {
                   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                   if (val == null) {
                     return 'Wajib diisi';
-                  } else if (!emailRegex.hasMatch(val)) {
+                  } else if (val != '' && !emailRegex.hasMatch(val)) {
                     return 'Format tidak valid';
                   }else{
                     return null;
@@ -171,10 +172,7 @@ class EditUserPage extends StatelessWidget {
               const SizedBox(height: 18),
               Text(
                 'Foto Profil',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.left,
               ),
               AbsorbPointer(
@@ -269,10 +267,41 @@ class EditUserPage extends StatelessWidget {
                   ),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final Map<String, dynamic> data = {
-                        
-                      };
-                      final result = await userC.updateById(int.parse(userId),data);
+                      final Map<String, dynamic> data = {};
+                      XFile? profile;
+                      String contentType = 'application/json';
+                      if (numberIdC.text != currentUser.numberId) {
+                        data['number_id'] = numberIdC.text;
+                      }
+                      if (nameC.text != currentUser.name.replaceAll(' (Pest Control)', '')) {
+                        data['name'] = nameC.text;
+                        if (selectedPestControl.value == 'Yes') {
+                          data['name'] = '${nameC.text} (Pest Control)';
+                        }
+                      }
+                      if (selectedPestControl.value != (currentUser.name.contains('(Pest Control)') ? 'Yes' : 'No')) {
+                        if (selectedPestControl.value == 'Yes') {
+                          data['name'] = '${nameC.text} (Pest Control)';
+                        } else {
+                          data['name'] = nameC.text;
+                        }
+                      }
+                      if (selectedRole.value != (currentUser.roleId == '2' ? 'Cleaning Service' : 'Supervisor')) {
+                        data['role_id'] = selectedRole.value == 'Cleaning Service' ? 2 : 1;
+                        if ((selectedRole.value == 'Cleaning Service' ? 2 : 1) == 1) {
+                          data['name'] = nameC.text.replaceAll(' (Pest Control)', '');
+                        }
+                      }
+                      if (emailC.text != currentUser.email) {
+                        data['email'] = emailC.text;
+                      }
+                      if (userC.selectedImageEdit.value != null) {
+                        profile = userC.selectedImageEdit.value;
+                        contentType = 'multipart/form-data';
+                      }else if (userC.profilC.value.isEmpty && (userC.profilC.value != currentUser.profile)) {
+                        data['delete_profile'] = true;
+                      }
+                      final result = await userC.updateById(int.parse(userId),data,profile,contentType);
                       if (result == 'ok'){
                         Get.back(result: true);
                         AppSnackbarRaw.success('Berhasil edit user!');

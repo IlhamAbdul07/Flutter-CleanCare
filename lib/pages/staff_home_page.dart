@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
-import 'package:flutter_cleancare/controllers/staff_job_controller.dart';
-import 'package:flutter_cleancare/data/models/staff_job_model.dart';
+import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/job_detail_page.dart';
-// import 'package:flutter_cleancare/widgets/cleaning_staff_widget.dart';
-// import 'package:flutter_cleancare/widgets/noncleaning_staff_widget.dart';
 import 'package:get/get.dart';
 
 class StaffHomePage extends StatelessWidget {
@@ -14,7 +11,12 @@ class StaffHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authC = Get.find<AuthController>();
-    final jobC = Get.put(StaffJobController());
+    final jobC = Get.put(JobController());
+
+    Future.microtask(() {
+      jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+    });
+
     return Obx(() {
       final currentUser = authC.currentUser.value;
       if (currentUser == null) {
@@ -25,6 +27,7 @@ class StaffHomePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: context.theme.colorScheme.background,
           elevation: 0,
+          toolbarHeight: 60,
           titleSpacing: 16,
           title: Column(
             children: [
@@ -42,7 +45,7 @@ class StaffHomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Welcome, ${currentUser.name} (${currentUser.roleName})',
+                    'Halo ${currentUser.name.replaceAll(" (Pest Control)", "")}, semoga harimu menyenangkan.',
                     style: TextStyle(
                       fontSize: 14,
                       color: context.theme.colorScheme.primary,
@@ -61,22 +64,69 @@ class StaffHomePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Obx(() {
-                      final jobs = jobC.isCleaning.value
-                          ? jobC.cleaningSummary
-                          : jobC.nonCleaningSummary;
+                      final jobs = jobC.jobs;
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          jobC.fetchJobs();
+                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                         },
                         child: jobs.isEmpty
-                            ? const Center(child: Text("Belum ada pekerjaan."))
+                            ? ListView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                children: const [
+                                  SizedBox(
+                                    height: 300,
+                                    child: Center(child: Text("Belum ada data pekerjaan.")),
+                                  ),
+                                ],
+                              )
                             : ListView.builder(
                                 padding: const EdgeInsets.only(bottom: 80),
                                 itemCount: jobs.length,
                                 itemBuilder: (context, index) {
                                   final job = jobs[index];
-                                  return _buildJobCard(job);
+                                  return Card(
+                                    margin: const EdgeInsets.symmetric(vertical: 6),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.grey.shade400,
+                                        width: 1.0,
+                                        style: BorderStyle.solid,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: ListTile(
+                                      title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
+                                      subtitle: Text("${job.taskName} • ${job.floor}"),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          if (job.unreadComment == true)
+                                            const Padding(
+                                              padding: EdgeInsets.only(right: 1),
+                                              child: Text(
+                                                'New Comment!',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 11,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ),
+                                          const Icon(Icons.arrow_forward_ios_rounded),
+                                        ],
+                                      ),
+                                      onTap: () async {
+                                        final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
+                                        if (result == true) {
+                                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                        } else {
+                                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                        }
+                                      },
+                                    ),
+                                  );
                                 },
                               ),
                       );
@@ -113,29 +163,6 @@ class StaffHomePage extends StatelessWidget {
         ),
       );
     });
-  }
-
-  Widget _buildJobCard(StaffJobModel job) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Colors.grey.shade400,
-          width: 1.0,
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        title: Text(job.jobName),
-        subtitle: Text("${job.jobType} • ${job.location}"),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded),
-        onTap: () {
-          Get.to(() => JobDetailPage());
-        },
-      ),
-    );
   }
 }
 

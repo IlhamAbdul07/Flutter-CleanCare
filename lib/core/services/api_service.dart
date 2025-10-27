@@ -311,6 +311,47 @@ class ApiService {
     return response;
   }
 
+
+  // ============================== MASTER DATA (WORK) ============================== //
+  static Future<dynamic> handleWork({
+    required String method,
+    bool? dashboardAdmin,
+    int? workId,
+    Map<String, dynamic>? data,
+    String? contentType = "application/json",
+    Map<String, String>? params,
+    List<http.MultipartFile> listFile = const [],
+  }) async {
+    final token = StorageService.getToken();
+
+    String endpoint;
+    if (method == 'GET') {
+      endpoint = '/work${workId != null ? "/$workId" : ""}${params != null ? GeneralService.buildQueryParams(params) : ""}';
+      if (dashboardAdmin != null && dashboardAdmin){
+        endpoint = '/work/dashboard-admin${params != null ? GeneralService.buildQueryParams(params) : ""}';
+      }
+    } else if (method == 'POST') {
+      endpoint = '/work';
+    } else if (method == 'PUT' && workId != null) {
+      endpoint = '/work/$workId';
+    } else if (method == 'DELETE' && workId != null) {
+      endpoint = '/work/$workId';
+    } else {
+      throw Exception('Parameter tidak lengkap untuk operasi $method');
+    }
+
+    final response = await apiRequest(
+      method: method,
+      endpoint: endpoint,
+      body: data,
+      token: token,
+      listFile: listFile,
+      contentType: contentType!,
+    );
+
+    return response;
+  }
+
   
   // ============================== CMS ============================== //
   static Future<Map<String, dynamic>?> fetchDashboard(String token) async {
@@ -1152,6 +1193,27 @@ class ApiService {
       method: 'GET',
       endpoint: '/user/export',
       params: {'format':'pdf'},
+      token: token,
+    );
+    return response;
+  }
+
+  static String formatDateRange(DateTime? date) {
+    if (date == null) return '';
+    final formatted = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+    return "${formatted}_$formatted";
+  }
+
+  static Future<http.Response> exportWorks(DateTime? date) async {
+    final token = StorageService.getToken();
+    final createdDate = formatDateRange(date);
+    final response = await apiRequestExportData(
+      method: 'GET',
+      endpoint: '/work/export',
+      params: {
+        'format':'pdf',
+        'created_at':createdDate
+      },
       token: token,
     );
     return response;

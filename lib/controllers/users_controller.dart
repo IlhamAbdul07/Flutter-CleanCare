@@ -10,8 +10,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
 class UserController extends GetxController {
-  // final UserRepository _repo = UserRepository();
-
   var users = <Users>[].obs;
   var userSingle = Rxn<UserSingle>();
   var searchQuery = ''.obs;

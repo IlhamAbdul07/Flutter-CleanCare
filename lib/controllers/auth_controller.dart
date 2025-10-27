@@ -34,7 +34,7 @@ class AuthController extends GetxController {
         currentUser.value = user;
         StorageService.setUser(user.toJson());
         StorageService.setToken(token);
-        AppSnackbarRaw.success('Berhasil Login, \nHalo ${user.name}, selamat datang!');
+        AppSnackbarRaw.success('Berhasil Login, \nHalo ${user.name.replaceAll(" (Pest Control)", "")}, selamat datang!');
         Get.offAll(() => MainPage());
       } else {
         if (response != null && response['data'] != null) {

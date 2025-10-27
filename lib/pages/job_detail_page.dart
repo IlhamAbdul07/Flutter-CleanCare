@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/widgets/app_dialog.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/route_manager.dart';
 
 class JobDetailPage extends StatelessWidget {
-  const JobDetailPage({super.key});
+  final int jobId;
+  const JobDetailPage({super.key, required this.jobId});
 
   @override
   Widget build(BuildContext context) {
+    final authC = Get.find<AuthController>();
     final descC = TextEditingController();
     final commentC = TextEditingController();
     final jobTypeList = ['Cleaning', 'Non-Cleaning'];

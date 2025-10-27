@@ -1,58 +1,47 @@
-import 'package:flutter_cleancare/data/models/staff_job_model.dart';
-import 'package:flutter_cleancare/data/repositories/staff_job_repository.dart';
+import 'package:flutter_cleancare/core/services/api_service.dart';
+import 'package:flutter_cleancare/data/models/job_model.dart';
+import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
 
 class StaffJobController extends GetxController {
-  final StaffJobRepository _repo = StaffJobRepository();
+  var jobs = <Jobs>[].obs;
 
-  final RxList<StaffJobModel> jobList = <StaffJobModel>[].obs;
-  RxBool isCleaning = true.obs;
-  RxList<StaffJobModel> cleaningSummary = <StaffJobModel>[].obs;
-  RxList<StaffJobModel> nonCleaningSummary = <StaffJobModel>[].obs;
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  // }
 
-  var jobs = <StaffJobModel>[].obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchJobs();
-  }
-
-  void fetchJobs() {
-    final all = _repo.getAllJobs();
-    cleaningSummary.assignAll(all.where((e) => e.jobType == 'Cleaning'));
-    nonCleaningSummary.assignAll(all.where((e) => e.jobType == 'Non-Cleaning'));
-    jobs.value = all;
-  }
-
-  // 🔹 Ganti mode tampilan Cleaning / Non-Cleaning
-  void setCleaning(bool value) {
-    isCleaning.value = value;
-  }
-
-  void addJob({
-    required String id,
-    required String jobName,
-    required String jobType,
-    required String location,
-    required DateTime completedAt,
-    required String notes,
-  }) {
-    _repo.addJob(
-      StaffJobModel(
-        id: id,
-        jobName: jobName,
-        jobType: jobType,
-        location: location,
-        completedAt: completedAt,
-        notes: notes,
-      ),
+  Future<void> fetchJobs(int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date) async {
+    late Map<String, String> param = {};
+    if (userId != null){
+      param['user_id'] = userId.toString();
+    }
+    if (taskId != null){
+      param['task_id'] = taskId.toString();
+    }
+    if (taskTypeId != null){
+      param['task_type_id'] = taskTypeId.toString();
+    }
+    if (floor != null){
+      param['floor'] = floor;
+    }
+    if (date != null){
+      final createdDate = ApiService.formatDateRange(date);
+      param['created_at'] = createdDate;
+    }
+    final response = await ApiService.handleWork(
+      method: 'GET',
+      params: param,
     );
-    fetchJobs();
-  }
-
-  void deleteJob(String id) {
-    _repo.removeJob(id);
-    fetchJobs();
+    if (response != null && response['success'] == true) {
+      final data = response['data'];
+      final List<dynamic> jobList = data['data'] ?? [];
+      final jobsData = jobList.map((e) => Jobs.fromJson(e)).toList();
+      jobs.value = jobsData;
+    } else {
+      final errorData = response?['data'];
+      final message = errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
+      AppSnackbarRaw.error(message);
+    }
   }
 }

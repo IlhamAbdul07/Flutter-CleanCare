@@ -25,7 +25,7 @@ class AdminHomePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.background,
           elevation: 0,
-          toolbarHeight: 60,
+          toolbarHeight: 70,
           titleSpacing: 16,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +49,7 @@ class AdminHomePage extends StatelessWidget {
         ),
         body: RefreshIndicator(
           onRefresh: () async {
-            jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+            await jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

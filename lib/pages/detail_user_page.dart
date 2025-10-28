@@ -29,7 +29,7 @@ class DetailUserPage extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async {
-            userC.getById(int.parse(userId));
+            await userC.getById(int.parse(userId));
           },
           child: user == null
               ? const Center(child: Text("no user"))

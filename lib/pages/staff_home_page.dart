@@ -27,7 +27,7 @@ class StaffHomePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: context.theme.colorScheme.background,
           elevation: 0,
-          toolbarHeight: 60,
+          toolbarHeight: 70,
           titleSpacing: 16,
           title: Column(
             children: [
@@ -72,7 +72,7 @@ class StaffHomePage extends StatelessWidget {
                           jobC.clearImageBeforeEdit();
                           jobC.clearImageAfterEdit();
                           jobC.setIsLoading(false);
-                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                         },
                         child: jobs.isEmpty
                             ? ListView(

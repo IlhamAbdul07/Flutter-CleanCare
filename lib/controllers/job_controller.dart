@@ -49,11 +49,11 @@ class JobController extends GetxController {
     isCleaning.value = value;
   }
 
-  void refreshDashboard(bool cleaning, DateTime? date) {
+  Future<void> refreshDashboard(bool cleaning, DateTime? date) async {
     isCleaning.value = cleaning;
     selectedDate.value = date;
-    cleaningSummary(1, selectedDate.value);
-    cleaningSummary(2, selectedDate.value);
+    await cleaningSummary(1, selectedDate.value);
+    await cleaningSummary(2, selectedDate.value);
   }
 
   Future<void> exportJobs(DateTime? date) async {
@@ -246,6 +246,41 @@ class JobController extends GetxController {
       method: 'DELETE',
       workId: id,
     );
+    if (response != null && response['success'] == true) {
+      return 'ok';
+    } else {
+      final errorMessage = response!['data']?['message'] ??
+        response['message'] ??
+        'Terjadi kesalahan saat registrasi.';
+      return errorMessage;
+    }
+  }
+
+  Future<String> create(int taskId, int taskTypeId, String floor, String info, XFile? imgBefore, XFile? imgAfter, String contentType)  async {
+    final List<http.MultipartFile> files = [];
+    if (imgBefore != null) {
+      final file = await http.MultipartFile.fromPath('image_before', imgBefore.path);
+      files.add(file);
+    }
+    if (imgAfter != null) {
+      final file = await http.MultipartFile.fromPath('image_after', imgAfter.path);
+      files.add(file);
+    }
+
+    final Map<String, dynamic> data = {
+      'task_id': taskId,
+      'task_type_id': taskTypeId,
+      'floor': floor,
+      'info': info,
+    };
+
+    final response = await ApiService.handleWork(
+      method: 'POST',
+      data: data,
+      listFile: files,
+      contentType: contentType
+    );
+
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {

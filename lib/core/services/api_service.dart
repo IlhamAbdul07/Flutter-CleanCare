@@ -312,6 +312,41 @@ class ApiService {
   }
 
 
+  // ============================== MASTER DATA (TASK TYPE) ============================== //
+  static Future<dynamic> handleTaskType({
+    required String method,
+    int? taskTypeId,
+    Map<String, dynamic>? data,
+    String? contentType = "application/json",
+    Map<String, String>? params,
+  }) async {
+    final token = StorageService.getToken();
+
+    String endpoint;
+    if (method == 'GET') {
+      endpoint = '/task/type${taskTypeId != null ? "/$taskTypeId" : ""}${params != null ? GeneralService.buildQueryParams(params) : ""}';
+    } else if (method == 'POST') {
+      endpoint = '/task/type';
+    } else if (method == 'PUT' && taskTypeId != null) {
+      endpoint = '/task/type/$taskTypeId';
+    } else if (method == 'DELETE' && taskTypeId != null) {
+      endpoint = '/task/type/$taskTypeId';
+    } else {
+      throw Exception('Parameter tidak lengkap untuk operasi $method');
+    }
+
+    final response = await apiRequest(
+      method: method,
+      endpoint: endpoint,
+      body: data,
+      token: token,
+      contentType: contentType!,
+    );
+
+    return response;
+  }
+
+
   // ============================== MASTER DATA (WORK) ============================== //
   static Future<dynamic> handleWork({
     required String method,

@@ -183,6 +183,8 @@ class UserManagementPage extends StatelessWidget {
                     final result = await Get.to(() => AddUserPage());
                     if (result == true) {
                       userC.refreshUsers();
+                    }else{
+                      userC.refreshUsers();
                     }
                   },
                 ),

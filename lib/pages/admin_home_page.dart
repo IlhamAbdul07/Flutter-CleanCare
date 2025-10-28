@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
+import 'package:flutter_cleancare/pages/task_management_page.dart';
 import 'package:flutter_cleancare/widgets/cleaning_list_widget.dart';
 import 'package:flutter_cleancare/widgets/noncleaning_list_widget.dart';
 import 'package:get/get.dart';
@@ -145,6 +146,20 @@ class AdminHomePage extends StatelessWidget {
                         ),
                         child: const Text('Non-Cleaning'),
                       ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () async {
+                        final result = await Get.to(() => TaskManagementPage());
+                        if (result == true) {
+                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                        } else {
+                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                        }
+                      },
+                      icon: const Icon(Icons.workspaces_filled),
+                      color: Colors.black,
+                      tooltip: 'Task Type',
                     ),
                   ],
                 ),

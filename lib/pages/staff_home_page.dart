@@ -68,6 +68,10 @@ class StaffHomePage extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () async {
+                          jobC.jobSingle.value=null;
+                          jobC.clearImageBeforeEdit();
+                          jobC.clearImageAfterEdit();
+                          jobC.setIsLoading(false);
                           jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                         },
                         child: jobs.isEmpty
@@ -120,8 +124,16 @@ class StaffHomePage extends StatelessWidget {
                                       onTap: () async {
                                         final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
                                         if (result == true) {
+                                          jobC.jobSingle.value=null;
+                                          jobC.clearImageBeforeEdit();
+                                          jobC.clearImageAfterEdit();
+                                          jobC.setIsLoading(false);
                                           jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                                         } else {
+                                          jobC.jobSingle.value=null;
+                                          jobC.clearImageBeforeEdit();
+                                          jobC.clearImageAfterEdit();
+                                          jobC.setIsLoading(false);
                                           jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                                         }
                                       },

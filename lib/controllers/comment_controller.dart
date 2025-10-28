@@ -1,48 +1,37 @@
 import 'package:flutter_cleancare/core/services/api_service.dart';
+import 'package:flutter_cleancare/data/models/comment_model.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
-import 'package:flutter_cleancare/data/models/tasks_model.dart';
 
-class TaskController extends GetxController {
-  var tasks = <Tasks>[].obs;
-  var searchQuery = ''.obs;
-  var filterTask = 0.obs;
+class CommentController extends GetxController {
+  var comment = <Comment>[].obs;
+  var filterJob = 0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    refreshTasks();
+  Future<void> setFilterJob(int jobId) async {
+    filterJob.value = jobId;
+    await refreshComment();
   }
 
-  void searchTask(String query) {
-    searchQuery.value = query;
-    refreshTasks();
-  }
-
-  Future<void> setFilterTask(int taskId) async {
-    filterTask.value = taskId;
-    await refreshTasks();
-  }
-
-  Future<void> refreshTasks() async {
+  Future<void> refreshComment() async {
     late Map<String, String> param = {
       'no_paging': 'yes',
+      'order': 'created_at',
+      'order_by': 'asc',
     };
-    if (searchQuery.value!=''){
-      param['search'] = searchQuery.value;
+    int? workId;
+    if (filterJob.value!=0){
+      workId = filterJob.value;
     }
-    if (filterTask.value!=0){
-      param['task_id'] = filterTask.value.toString();
-    }
-    final response = await ApiService.handleTaskType(
+    final response = await ApiService.handleComment(
       method: 'GET',
+      commentId: workId,
       params: param,
     );
     if (response != null && response['success'] == true) {
       final data = response['data'];
-      final List<dynamic> userList = data['data'] ?? [];
-      final tasksData = userList.map((e) => Tasks.fromJson(e)).toList();
-      tasks.value = tasksData;
+      final List<dynamic> commentList = data['data'] ?? [];
+      final commentData = commentList.map((e) => Comment.fromJson(e)).toList();
+      comment.value = commentData;
     } else {
       final errorData = response?['data'];
       final message = errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
@@ -50,17 +39,15 @@ class TaskController extends GetxController {
     }
   }
 
-  Future<String> create(int taskId, String name) async {
+  Future<String> create(int workId, String comment) async {
     final Map<String, dynamic> data = {
-      'task_id': taskId,
-      'name': name,
+      'work_id': workId,
+      'comment': comment,
     };
-
-    final response = await ApiService.handleTaskType(
+    final response = await ApiService.handleComment(
       method: 'POST',
       data: data,
     );
-
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {
@@ -72,9 +59,9 @@ class TaskController extends GetxController {
   }
 
   Future<String> deleteById(int id) async {
-    final response = await ApiService.handleTaskType(
+    final response = await ApiService.handleComment(
       method: 'DELETE',
-      taskTypeId: id,
+      commentId: id,
     );
     if (response != null && response['success'] == true) {
       return 'ok';
@@ -86,13 +73,15 @@ class TaskController extends GetxController {
     }
   }
 
-  Future<String> updateById(int id, Map<String, dynamic> data) async {
-    final response = await ApiService.handleTaskType(
+  Future<String> updateById(int id, String comment) async {
+    final Map<String, dynamic> data = {
+      'comment': comment,
+    };
+    final response = await ApiService.handleComment(
       method: 'PUT',
-      taskTypeId: id,
+      commentId: id,
       data: data,
     );
-
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {

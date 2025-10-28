@@ -2,10 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/core/services/api_service.dart';
 import 'package:flutter_cleancare/data/models/job_model.dart';
+import 'package:flutter_cleancare/data/models/job_single_model.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 class JobController extends GetxController {
   final selectedDate = Rxn<DateTime>();
@@ -13,6 +16,12 @@ class JobController extends GetxController {
   final cleaningSummaryList = <Map<String, dynamic>>[].obs;
   final nonCleaningSummaryList = <Map<String, dynamic>>[].obs;
   var jobs = <Jobs>[].obs;
+  var jobSingle = Rxn<JobSingle>();
+  var selectedImageBeforeEdit = Rx<XFile?>(null);
+  var selectedImageAfterEdit = Rx<XFile?>(null);
+  final imageBeforeC = ''.obs;
+  final imageAfterC = ''.obs;
+  final isLoading = false.obs;
 
   @override
   void onInit() {
@@ -150,6 +159,100 @@ class JobController extends GetxController {
       final errorData = response?['data'];
       final message = errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
       AppSnackbarRaw.error(message);
+    }
+  }
+
+  Future<void> getById(int id) async {
+    final response = await ApiService.handleWork(
+      method: 'GET',
+      workId: id,
+    );
+    if (response != null && response['success'] == true) {
+      final data = response['data']['data'];
+      if (data != null) {
+        final singleJob = JobSingle.fromJson(data);
+        jobSingle.value = singleJob;
+      }else{
+        jobSingle.value = null;
+        final errorMessage = response!['data']?['message'] ??
+        response['message'] ??
+        'Terjadi kesalahan saat registrasi.';
+        AppSnackbarRaw.error(errorMessage);
+      }
+    }
+  }
+
+  void pickImageBeforeEdit() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImageBeforeEdit.value = image;
+    }
+  }
+
+  void clearImageBeforeEdit() {
+    selectedImageBeforeEdit.value = null;
+    imageBeforeC.value = '';
+  }
+
+  void pickImageAfterEdit() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImageAfterEdit.value = image;
+    }
+  }
+
+  void clearImageAfterEdit() {
+    selectedImageAfterEdit.value = null;
+    imageAfterC.value = '';
+  }
+
+  void setIsLoading(bool value) {
+    isLoading.value = value;
+  }
+
+  Future<String> updateById(int id, Map<String, dynamic> data, XFile? imgBefore, XFile? imgAfter, String contentType) async {
+    final List<http.MultipartFile> files = [];
+    if (imgBefore != null) {
+      final file = await http.MultipartFile.fromPath('image_before', imgBefore.path);
+      files.add(file);
+    }
+    if (imgAfter != null) {
+      final file = await http.MultipartFile.fromPath('image_after', imgAfter.path);
+      files.add(file);
+    }
+
+    final response = await ApiService.handleWork(
+      method: 'PUT',
+      workId: id,
+      data: data,
+      listFile: files,
+      contentType: contentType
+    );
+
+    if (response != null && response['success'] == true) {
+      return 'ok';
+    } else {
+      final errorMessage = response!['data']?['message'] ??
+        response['message'] ??
+        'Terjadi kesalahan saat registrasi.';
+      return errorMessage;
+    }
+  }
+
+  Future<String> deleteById(int id) async {
+    final response = await ApiService.handleWork(
+      method: 'DELETE',
+      workId: id,
+    );
+    if (response != null && response['success'] == true) {
+      return 'ok';
+    } else {
+      final errorMessage = response!['data']?['message'] ??
+        response['message'] ??
+        'Terjadi kesalahan saat registrasi.';
+      return errorMessage;
     }
   }
 }

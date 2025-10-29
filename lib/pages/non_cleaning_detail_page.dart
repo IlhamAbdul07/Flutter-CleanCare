@@ -22,10 +22,6 @@ class NonCleaningDetailPage extends StatelessWidget {
       appBar: AppBar(title: Text(userName)),
       body: RefreshIndicator(
         onRefresh: () async {
-          jobC.jobSingle.value=null;
-          jobC.clearImageBeforeEdit();
-          jobC.clearImageAfterEdit();
-          jobC.setIsLoading(false);
           await jobC.fetchJobs(userId, taskId, null, null, jobC.selectedDate.value);
         },
         child: Obx(() {
@@ -73,16 +69,10 @@ class NonCleaningDetailPage extends StatelessWidget {
                 onTap: () async {
                   final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
                   if (result == true) {
-                    jobC.jobSingle.value=null;
-                    jobC.clearImageBeforeEdit();
-                    jobC.clearImageAfterEdit();
-                    jobC.setIsLoading(false);
+                    jobC.resetDetailJobState();
                     await jobC.fetchJobs(userId, taskId, null, null, jobC.selectedDate.value);
                   } else {
-                    jobC.jobSingle.value=null;
-                    jobC.clearImageBeforeEdit();
-                    jobC.clearImageAfterEdit();
-                    jobC.setIsLoading(false);
+                    jobC.resetDetailJobState();
                     await jobC.fetchJobs(userId, taskId, null, null, jobC.selectedDate.value);
                   }
                 },

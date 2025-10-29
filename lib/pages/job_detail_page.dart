@@ -335,6 +335,12 @@ class JobDetailPage extends StatelessWidget {
                                 }),
                               ),
                             ),
+                            // button delete image before
+                            // const SizedBox(width: 8),
+                            // IconButton(
+                            //   onPressed: () => jobC.clearImageBeforeEdit(),
+                            //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
+                            // ),
                           ],
                         ),
                       ),
@@ -402,6 +408,12 @@ class JobDetailPage extends StatelessWidget {
                                 }),
                               ),
                             ),
+                            // button delete image after
+                            // const SizedBox(width: 8),
+                            // IconButton(
+                            //   onPressed: () => jobC.clearImageAfterEdit(),
+                            //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
+                            // ),
                           ],
                         ),
                       ),
@@ -446,11 +458,17 @@ class JobDetailPage extends StatelessWidget {
                                         if (jobC.selectedImageBeforeEdit.value != null) {
                                           imgBefore = jobC.selectedImageBeforeEdit.value;
                                           contentType = 'multipart/form-data';
-                                        }
+                                        } 
+                                        // if (jobC.imageBeforeC.value.isEmpty && singleJob.imageBefore.isNotEmpty) {
+                                        //   data['delete_image_before'] = 'yes';
+                                        // }
                                         if (jobC.selectedImageAfterEdit.value != null) {
                                           imgAfter = jobC.selectedImageAfterEdit.value;
                                           contentType = 'multipart/form-data';
-                                        }
+                                        } 
+                                        // if (jobC.imageAfterC.value.isEmpty && singleJob.imageAfter.isNotEmpty) {
+                                        //   data['delete_image_after'] = 'yes';
+                                        // }
                                         jobC.setIsLoading(true);
                                         final result = await jobC.updateById(jobId,data,imgBefore,imgAfter,contentType);
                                         if (result == 'ok'){

@@ -212,6 +212,15 @@ class JobController extends GetxController {
     isLoading.value = value;
   }
 
+  void resetDetailJobState() {
+    jobSingle.value = null;
+    selectedImageBeforeEdit.value = null;
+    selectedImageAfterEdit.value = null;
+    imageBeforeC.value = '';
+    imageAfterC.value = '';
+    isLoading.value = false;
+  }
+
   Future<String> updateById(int id, Map<String, dynamic> data, XFile? imgBefore, XFile? imgAfter, String contentType) async {
     final List<http.MultipartFile> files = [];
     if (imgBefore != null) {

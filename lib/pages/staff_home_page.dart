@@ -68,10 +68,6 @@ class StaffHomePage extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          jobC.jobSingle.value=null;
-                          jobC.clearImageBeforeEdit();
-                          jobC.clearImageAfterEdit();
-                          jobC.setIsLoading(false);
                           await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                         },
                         child: jobs.isEmpty
@@ -124,17 +120,11 @@ class StaffHomePage extends StatelessWidget {
                                       onTap: () async {
                                         final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
                                         if (result == true) {
-                                          jobC.jobSingle.value=null;
-                                          jobC.clearImageBeforeEdit();
-                                          jobC.clearImageAfterEdit();
-                                          jobC.setIsLoading(false);
-                                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                          jobC.resetDetailJobState();
+                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                                         } else {
-                                          jobC.jobSingle.value=null;
-                                          jobC.clearImageBeforeEdit();
-                                          jobC.clearImageAfterEdit();
-                                          jobC.setIsLoading(false);
-                                          jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                          jobC.resetDetailJobState();
+                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
                                         }
                                       },
                                     ),
@@ -165,8 +155,17 @@ class StaffHomePage extends StatelessWidget {
                     color: Colors.white,
                     iconSize: 28,
                     icon: const Icon(Icons.add),
-                    tooltip: 'Tambah User',
-                    onPressed: () => Get.to(() => const AddDetailJob()),
+                    tooltip: 'Tambah Pekerjaan',
+                    onPressed: () async {
+                      final result = await Get.to(() => const AddDetailJob());
+                      if (result == true) {
+                        jobC.resetDetailJobState();
+                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                      } else {
+                        jobC.resetDetailJobState();
+                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                      }
+                    },
                   ),
                 ),
               ),

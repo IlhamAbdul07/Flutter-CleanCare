@@ -213,9 +213,19 @@ class LoginPage extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 120.0),
-                      child: Text(
-                        'v1.0.0',
-                        style: TextStyle(color: Colors.white54),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'v1.0.0',
+                            style: TextStyle(color: Colors.white54),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '© 2025 Alip Aulia Harun. All rights reserved.',
+                            style: TextStyle(color: Colors.white54, fontSize: 12),
+                          ),
+                        ],
                       ),
                     ),
                   ),

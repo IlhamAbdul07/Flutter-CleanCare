@@ -278,146 +278,184 @@ class JobDetailPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 8),
-                    AbsorbPointer(
-                      absorbing: isAdmin,
-                      child: GestureDetector(
-                        onTap: () => jobC.pickImageBeforeEdit(),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 140,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.transparent),
-                                ),
-                                child: Obx(() {
-                                  final selected = jobC.selectedImageBeforeEdit.value;
-                                  final imageBeforeUrl = jobC.imageBeforeC.value;
-                                  if (selected != null) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.file(
-                                        File(selected.path),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                      ),
-                                    );
-                                  } else if (imageBeforeUrl.isNotEmpty) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        imageBeforeUrl,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        errorBuilder: (context, error, stackTrace) => const Center(
-                                          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.upload_file, size: 40),
-                                          SizedBox(height: 6),
-                                          Text(
-                                            (isAdmin ? 'Belum ada foto yang diunggah.' : 'Unggah Foto Sebelum Dikerjakan.'),
-                                            style: TextStyle(color: Colors.black54),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                }),
+                    GestureDetector(
+                      onTap: () {
+                        if (!isAdmin){
+                          jobC.pickImageBeforeEdit();
+                        }
+                      },
+                      onLongPress: () {
+                        final selected = jobC.selectedImageBeforeEdit.value;
+                        final imageUrl = jobC.imageBeforeC.value;
+                        if (selected != null) {
+                          AppDialog.showImagePopup(context, selected.path, isLocal: true);
+                        } else if (imageUrl.isNotEmpty) {
+                          AppDialog.showImagePopup(context, imageUrl, isLocal: false);
+                        }
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 140,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.transparent),
                               ),
+                              child: Obx(() {
+                                final selected = jobC.selectedImageBeforeEdit.value;
+                                final imageBeforeUrl = jobC.imageBeforeC.value;
+                                if (selected != null) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.file(
+                                      File(selected.path),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                  );
+                                } else if (imageBeforeUrl.isNotEmpty) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      imageBeforeUrl,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (context, error, stackTrace) => const Center(
+                                        child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.upload_file, size: 40),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          (isAdmin ? 'Belum ada foto yang diunggah.' : 'Unggah Foto Sebelum Dikerjakan.'),
+                                          style: TextStyle(color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              }),
                             ),
-                            // button delete image before
-                            // const SizedBox(width: 8),
-                            // IconButton(
-                            //   onPressed: () => jobC.clearImageBeforeEdit(),
-                            //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
-                            // ),
-                          ],
-                        ),
+                          ),
+                          // button delete image before
+                          // const SizedBox(width: 8),
+                          // IconButton(
+                          //   onPressed: () => jobC.clearImageBeforeEdit(),
+                          //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
+                          // ),
+                        ],
                       ),
                     ),
+                    if (jobC.selectedImageBeforeEdit.value != null || jobC.imageBeforeC.value.isNotEmpty)...[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6, left: 4),
+                        child: Text(
+                          '* Tekan untuk melihat pratinjau',
+                          style: const TextStyle(color: Colors.blue, fontSize: 13),
+                        ),
+                      )
+                    ],
                     const SizedBox(height: 20),
                     const Text(
                       'Foto Sesudah',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 8),
-                    AbsorbPointer(
-                      absorbing: isAdmin,
-                      child: GestureDetector(
-                        onTap: () => jobC.pickImageAfterEdit(),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 140,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.transparent),
-                                ),
-                                child: Obx(() {
-                                  final selected = jobC.selectedImageAfterEdit.value;
-                                  final imageAfterUrl = jobC.imageAfterC.value;
-                                  if (selected != null) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.file(
-                                        File(selected.path),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                      ),
-                                    );
-                                  } else if (imageAfterUrl.isNotEmpty) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        imageAfterUrl,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        errorBuilder: (context, error, stackTrace) => const Center(
-                                          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.upload_file, size: 40),
-                                          SizedBox(height: 6),
-                                          Text(
-                                            (isAdmin ? 'Belum ada foto yang diunggah.' : 'Unggah Foto Sesudah Dikerjakan.'),
-                                            style: TextStyle(color: Colors.black54),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                }),
+                    GestureDetector(
+                      onTap: () {
+                        if (!isAdmin){
+                          jobC.pickImageAfterEdit();
+                        }
+                      },
+                      onLongPress: () {
+                        final selected = jobC.selectedImageAfterEdit.value;
+                        final imageUrl = jobC.imageAfterC.value;
+                        if (selected != null) {
+                          AppDialog.showImagePopup(context, selected.path, isLocal: true);
+                        } else if (imageUrl.isNotEmpty) {
+                          AppDialog.showImagePopup(context, imageUrl, isLocal: false);
+                        }
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 140,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.transparent),
                               ),
+                              child: Obx(() {
+                                final selected = jobC.selectedImageAfterEdit.value;
+                                final imageAfterUrl = jobC.imageAfterC.value;
+                                if (selected != null) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.file(
+                                      File(selected.path),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                  );
+                                } else if (imageAfterUrl.isNotEmpty) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      imageAfterUrl,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (context, error, stackTrace) => const Center(
+                                        child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.upload_file, size: 40),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          (isAdmin ? 'Belum ada foto yang diunggah.' : 'Unggah Foto Sesudah Dikerjakan.'),
+                                          style: TextStyle(color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              }),
                             ),
-                            // button delete image after
-                            // const SizedBox(width: 8),
-                            // IconButton(
-                            //   onPressed: () => jobC.clearImageAfterEdit(),
-                            //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
-                            // ),
-                          ],
-                        ),
+                          ),
+                          // button delete image after
+                          // const SizedBox(width: 8),
+                          // IconButton(
+                          //   onPressed: () => jobC.clearImageAfterEdit(),
+                          //   icon: const Icon(Icons.delete, color: Colors.red, size: 28),
+                          // ),
+                        ],
                       ),
                     ),
+                    if (jobC.selectedImageAfterEdit.value != null || jobC.imageAfterC.value.isNotEmpty)...[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6, left: 4),
+                        child: Text(
+                          '* Tekan untuk melihat pratinjau',
+                          style: const TextStyle(color: Colors.blue, fontSize: 13),
+                        ),
+                      )
+                    ],
                     const SizedBox(height: 15),
                     if (!isAdmin)...[
                       Row(

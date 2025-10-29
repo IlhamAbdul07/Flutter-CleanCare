@@ -1,5 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
+import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:http/http.dart' as http;
 
 class AppDialog {
   /// 🔹 Dialog konfirmasi umum (bisa untuk logout, hapus, simpan, dll)
@@ -228,6 +233,73 @@ class AppDialog {
           ),
         ],
       ),
+    );
+  }
+
+  static void showImagePopup(BuildContext context, String imagePath, {bool isLocal = false}) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black.withOpacity(0.9),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PhotoView(
+                imageProvider: isLocal
+                    ? FileImage(File(imagePath))
+                    : NetworkImage(imagePath) as ImageProvider,
+                backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+                loadingBuilder: (context, event) =>
+                    const Center(child: CircularProgressIndicator(color: Colors.white)),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white.withOpacity(0.9),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  onPressed: () async {
+                    try {
+                      late File file;
+                      if (isLocal) {
+                        file = File(imagePath);
+                      } else {
+                        final response = await http.get(Uri.parse(imagePath));
+                        final downloads = Directory('/storage/emulated/0/Download');
+                        file = File('${downloads.path}/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                        await file.writeAsBytes(response.bodyBytes);
+                      }
+
+                      await GallerySaver.saveImage(file.path);
+                      AppSnackbarRaw.success('Gambar berhasil disimpan ke folder Download');
+                    } catch (e) {
+                      AppSnackbarRaw.success('Gagal menyimpan gambar');
+                    }
+                  },
+                  icon: const Icon(Icons.download),
+                  label: const Text('Unduh Gambar'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -38,14 +38,22 @@ class DetailUserPage extends StatelessWidget {
                   child: ListView(
                     children: [
                       const SizedBox(height: 20),
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: (user.profile.isNotEmpty)
-                            ? NetworkImage(user.profile)
-                            : null,
-                        child: (user.profile.isEmpty)
-                            ? const Icon(Icons.person, size: 50)
-                            : null,
+                      GestureDetector(
+                        onLongPress: () {
+                          final profileUrl = user.profile;
+                          if (profileUrl.isNotEmpty) {
+                            AppDialog.showImagePopup(context, profileUrl, isLocal: false);
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: (user.profile.isNotEmpty)
+                              ? NetworkImage(user.profile)
+                              : null,
+                          child: (user.profile.isEmpty)
+                              ? const Icon(Icons.person, size: 50)
+                              : null,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       ListTile(
@@ -131,8 +139,10 @@ class DetailUserPage extends StatelessWidget {
                                 onPressed: () async {
                                   final result = await Get.to(() => EditUserPage(userId: user.id));
                                   if (result == true) {
+                                    userC.clearImageEdit();
                                     userC.getById(int.parse(userId));
                                   }else{
+                                    userC.clearImageEdit();
                                     userC.getById(int.parse(userId));
                                   }
                                 },

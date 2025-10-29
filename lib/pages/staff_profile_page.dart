@@ -20,16 +20,24 @@ class StaffProfilePage extends StatelessWidget {
         children: [
           Column(
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: (authC.currentUser.value?.profile != null &&
-                        authC.currentUser.value!.profile.isNotEmpty)
-                    ? NetworkImage(authC.currentUser.value!.profile)
-                    : null,
-                child: (authC.currentUser.value?.profile == null ||
-                        authC.currentUser.value!.profile.isEmpty)
-                    ? const Icon(Icons.person, size: 50)
-                    : null,
+              GestureDetector(
+                onLongPress: () {
+                  final profile = authC.currentUser.value?.profile ?? '';
+                  if (profile.isNotEmpty) {
+                    AppDialog.showImagePopup(context, profile, isLocal: false);
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: (authC.currentUser.value?.profile != null &&
+                          authC.currentUser.value!.profile.isNotEmpty)
+                      ? NetworkImage(authC.currentUser.value!.profile)
+                      : null,
+                  child: (authC.currentUser.value?.profile == null ||
+                          authC.currentUser.value!.profile.isEmpty)
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+                ),
               ),
               const SizedBox(height: 10),
               Text('ID: ${authC.currentUser.value?.numberId}', style: TextStyle(fontSize: 15)),

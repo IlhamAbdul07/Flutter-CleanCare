@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/users_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
+import 'package:flutter_cleancare/widgets/app_dialog.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -179,6 +180,15 @@ class EditUserPage extends StatelessWidget {
                 absorbing: emailC.text == '',
                 child: GestureDetector(
                   onTap: () => userC.pickImageEdit(),
+                  onLongPress: () {
+                    final selected = userC.selectedImageEdit.value;
+                    final profilUrl = userC.profilC.value;
+                    if (selected != null) {
+                      AppDialog.showImagePopup(context, selected.path, isLocal: true);
+                    } else if (profilUrl.isNotEmpty) {
+                      AppDialog.showImagePopup(context, profilUrl, isLocal: false);
+                    }
+                  },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -241,6 +251,15 @@ class EditUserPage extends StatelessWidget {
                   ),
                 ),
               ),
+              if (userC.selectedImageEdit.value != null || userC.profilC.value.isNotEmpty)...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 4),
+                  child: Text(
+                    '* Tekan untuk melihat pratinjau',
+                    style: const TextStyle(color: Colors.blue, fontSize: 13),
+                  ),
+                )
+              ],
               if (emailC.text == '')...[
                 Padding(
                   padding: const EdgeInsets.only(top: 6, left: 4),

@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class GeneralService {
   static String buildQueryParams(Map<String, String>? params) {
     if (params == null || params.isEmpty) return '';
@@ -11,34 +9,19 @@ class GeneralService {
     return Uri(queryParameters: params).query;
   }
 
-  static String getDateFilter(String filter) {
-    DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('yyyy-MM-dd'); // Format YYYY-MM-DD
-    String startDate = "";
-    String endDate = "";
-
-    if (filter == "Today") {
-      startDate = formatter.format(now);
-      endDate = formatter.format(now);
-    } else if (filter == "This Week") {
-      DateTime startOfWeek =
-          now.subtract(Duration(days: now.weekday - 1)); // Senin awal minggu
-      DateTime endOfWeek =
-          startOfWeek.add(Duration(days: 6)); // Minggu akhir minggu
-
-      startDate = formatter.format(startOfWeek);
-      endDate = formatter.format(endOfWeek);
-    } else if (filter == "This Month") {
-      DateTime startOfMonth = DateTime(now.year, now.month, 1);
-      DateTime endOfMonth =
-          DateTime(now.year, now.month + 1, 0); // Hari terakhir bulan ini
-
-      startDate = formatter.format(startOfMonth);
-      endDate = formatter.format(endOfMonth);
+  static String formatTanggalIndo(String isoString) {
+      final d = DateTime.parse(isoString);
+      const hari = [
+        "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"
+      ];
+      const bulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      final namaHari = hari[d.weekday % 7];
+      final namaBulan = bulan[d.month - 1];
+      final jam = d.hour.toString().padLeft(2, '0');
+      final menit = d.minute.toString().padLeft(2, '0');
+      return "$namaHari, ${d.day} $namaBulan ${d.year} $jam:$menit";
     }
-
-    return startDate.isNotEmpty && endDate.isNotEmpty
-        ? '$startDate' '_' '$endDate'
-        : "";
-  }
 }

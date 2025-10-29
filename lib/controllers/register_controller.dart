@@ -64,7 +64,7 @@ class RegisterController extends GetxController {
     return isValid;
   }
 
-  void validateEmployeeId(String id) async {
+  Future<void> validateEmployeeId(String id) async {
     isLoading.value = true;
     final response = await ApiService.authVerifyNumber(id);
     // final result = _repo.validateEmployeeId(id);
@@ -90,7 +90,7 @@ class RegisterController extends GetxController {
     }
   }
 
-  void register(String numberId, String email, String password, XFile? profile) async {
+  Future<void> register(String numberId, String email, String password, XFile? profile) async {
     final Map<String, dynamic> data = {
       'number_id': numberId,
       'email': email,

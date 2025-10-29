@@ -23,7 +23,7 @@ class AuthController extends GetxController {
     }
   }
 
-  void login(String userId, String password) async {
+  Future<void> login(String userId, String password) async {
     try {
       final response = await ApiService.authLogin(userId, password);
 

@@ -39,7 +39,7 @@ class DetailUserPage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 20),
                       GestureDetector(
-                        onLongPress: () {
+                        onTap: () {
                           final profileUrl = user.profile;
                           if (profileUrl.isNotEmpty) {
                             AppDialog.showImagePopup(context, profileUrl, isLocal: false);

@@ -6,6 +6,7 @@ import '../controllers/register_controller.dart';
 class RegisterStepVerifyWidget extends StatelessWidget {
   final c = Get.find<RegisterController>();
   final idC = TextEditingController();
+  final isLoading = false.obs;
 
   RegisterStepVerifyWidget({super.key});
 
@@ -108,28 +109,40 @@ class RegisterStepVerifyWidget extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              SizedBox(
+                              Obx(() => SizedBox(
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: () =>
-                                      c.validateEmployeeId(idC.text),
+                                  onPressed: () async {
+                                    isLoading.value = true;
+                                    await c.validateEmployeeId(idC.text);
+                                    isLoading.value = false;
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.primaryBlue,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Lanjutkan',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  child: isLoading.value 
+                                    ? const SizedBox(
+                                        height: 18,
+                                        width: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Lanjutkan',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
                                 ),
-                              ),
+                              ),),
                               const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,

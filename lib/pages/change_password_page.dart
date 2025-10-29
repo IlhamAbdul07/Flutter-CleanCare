@@ -22,6 +22,7 @@ class ChangePasswordPage extends StatelessWidget {
     final obscureOld = ValueNotifier(true);
     final obscureNew = ValueNotifier(true);
     final obscureConfirm = ValueNotifier(true);
+    final isLoading = false.obs;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,7 +131,7 @@ class ChangePasswordPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
-              SizedBox(
+              Obx(() => SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -140,12 +141,22 @@ class ChangePasswordPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    "Simpan Password",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
+                  child: isLoading.value 
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        "Simpan Password",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      isLoading.value = true;
                       final user = await StorageService.getUser();
                       final data = {
                         "old_password": oldPasswordC.text,
@@ -166,10 +177,11 @@ class ChangePasswordPage extends StatelessWidget {
                           AppSnackbarRaw.error(message);
                         }
                       }
+                      isLoading.value = false;
                     }
                   },
                 ),
-              ),
+              ),),
             ],
           ),
         ),

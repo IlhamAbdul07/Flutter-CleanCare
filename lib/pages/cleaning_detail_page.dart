@@ -15,14 +15,14 @@ class CleaningDetailPage extends StatelessWidget {
     final jobC = Get.find<JobController>();
 
     Future.microtask(() {
-      jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value);
+      jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
     });
 
     return Scaffold(
       appBar: AppBar(title: Text(floor)),
       body: RefreshIndicator(
         onRefresh: () async {
-          await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value);
+          await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
         },
         child: Obx(() {
           final jobs = jobC.jobs;
@@ -40,42 +40,52 @@ class CleaningDetailPage extends StatelessWidget {
           }
         
           return ListView.builder(
+            padding: const EdgeInsets.all(5),
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: jobs.length,
             itemBuilder: (context, index) {
               final job = jobs[index];
-              return ListTile(
-                leading: const Icon(Icons.cleaning_services),
-                title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
-                subtitle: Text(job.userName),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (job.unreadComment == true)
-                      const Padding(
-                        padding: EdgeInsets.only(right: 1),
-                        child: Text(
-                          'New Comment!',
-                          style: TextStyle(
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Colors.grey.shade400,
+                    width: 1.0,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.cleaning_services),
+                  title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text(job.userName),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (job.unreadComment == true)
+                        const Padding(
+                          padding: EdgeInsets.only(right: 1),
+                          child: Icon(
+                            Icons.chat_sharp,
                             color: Colors.red,
-                            fontSize: 11,
-                            fontStyle: FontStyle.italic,
+                            size: 20,
                           ),
                         ),
-                      ),
-                    const Icon(Icons.arrow_forward_ios),
-                  ],
+                      const Icon(Icons.arrow_forward_ios),
+                    ],
+                  ),
+                  onTap: () async {
+                    final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
+                    if (result == true) {
+                      jobC.resetDetailJobState();
+                      await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
+                    } else {
+                      jobC.resetDetailJobState();
+                      await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
+                    }
+                  },
                 ),
-                onTap: () async {
-                  final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
-                  if (result == true) {
-                    jobC.resetDetailJobState();
-                    await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value);
-                  } else {
-                    jobC.resetDetailJobState();
-                    await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value);
-                  }
-                },
               );
             },
           );

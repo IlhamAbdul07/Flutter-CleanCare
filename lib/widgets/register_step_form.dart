@@ -14,6 +14,7 @@ class RegisterStepFormWidget extends StatelessWidget {
     final emailC = TextEditingController();
     final passwordC = TextEditingController();
     final passwordCC = TextEditingController();
+    final isLoading = false.obs;
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -390,18 +391,20 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 : const SizedBox()),
                             //Button Daftar
                             const SizedBox(height: 20),
-                            SizedBox(
+                            Obx(() => SizedBox(
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   final isValid = c.validate(emailC.text, passwordC.text, passwordCC.text);
                                   if (isValid) {
                                     if (c.selectedImage.value == null) {
                                       c.photoError.value = 'Foto profil wajib diisi';
                                       return;
                                     }
-                                    c.register(c.employeeData.value!.numberId, emailC.text, passwordC.text, c.selectedImage.value);
+                                    isLoading.value = true;
+                                    await c.register(c.employeeData.value!.numberId, emailC.text, passwordC.text, c.selectedImage.value);
+                                    isLoading.value = false;
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -410,16 +413,25 @@ class RegisterStepFormWidget extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  'Daftar',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                child: isLoading.value 
+                                  ? const SizedBox(
+                                      height: 18,
+                                      width: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Daftar',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                               ),
-                            ),
+                            ),),
                             const SizedBox(height: 30),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,

@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
     final loginC = Get.put(LoginController());
     final userC = TextEditingController();
     final passC = TextEditingController();
+    final isLoading = false.obs;
 
     return Scaffold(
       body: Column(
@@ -120,7 +121,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
+                  Obx(() => SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -133,13 +134,23 @@ class LoginPage extends StatelessWidget {
                           ), // Modified radius
                         ),
                       ),
-                      onPressed: () => authC.login(userC.text, passC.text),
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(fontSize: 18),
-                      ),
+                      onPressed: () async {
+                        isLoading.value = true;
+                        await authC.login(userC.text, passC.text);
+                        isLoading.value = false;
+                      },
+                      child: isLoading.value 
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('Sign In', style: TextStyle(fontSize: 18)),
                     ),
-                  ),
+                  ),),
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

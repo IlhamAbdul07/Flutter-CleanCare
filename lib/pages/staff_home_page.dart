@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
+import 'package:flutter_cleancare/core/services/general_service.dart';
 import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/job_detail_page.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,7 @@ class StaffHomePage extends StatelessWidget {
     final jobC = Get.put(JobController());
 
     Future.microtask(() {
-      jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+      jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
     });
 
     return Obx(() {
@@ -68,7 +69,7 @@ class StaffHomePage extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                         },
                         child: jobs.isEmpty
                             ? ListView(
@@ -97,21 +98,33 @@ class StaffHomePage extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: ListTile(
+                                      leading: Icon(
+                                        job.taskName.toLowerCase() == 'cleaning' ? Icons.cleaning_services_rounded : Icons.work_outline_rounded,
+                                        color: job.taskName.toLowerCase() == 'cleaning' ? Colors.teal : Colors.orange,
+                                        size: 30,
+                                      ),
                                       title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
-                                      subtitle: Text("${job.taskName} • ${job.floor}"),
+                                      subtitle: Wrap(
+                                        children: [
+                                          Text(
+                                            "${job.taskName} • ${job.floor}\n",
+                                          ),
+                                          Text(
+                                            GeneralService.formatTanggalIndo(job.createdAt),
+                                            style: const TextStyle(fontStyle: FontStyle.italic,fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           if (job.unreadComment == true)
                                             const Padding(
                                               padding: EdgeInsets.only(right: 1),
-                                              child: Text(
-                                                'New Comment!',
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 11,
-                                                  fontStyle: FontStyle.italic,
-                                                ),
+                                              child: Icon(
+                                                Icons.chat_sharp,
+                                                color: Colors.red,
+                                                size: 20,
                                               ),
                                             ),
                                           const Icon(Icons.arrow_forward_ios_rounded),
@@ -121,10 +134,10 @@ class StaffHomePage extends StatelessWidget {
                                         final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
                                         if (result == true) {
                                           jobC.resetDetailJobState();
-                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                                         } else {
                                           jobC.resetDetailJobState();
-                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                                         }
                                       },
                                     ),
@@ -160,10 +173,10 @@ class StaffHomePage extends StatelessWidget {
                       final result = await Get.to(() => const AddDetailJob());
                       if (result == true) {
                         jobC.resetDetailJobState();
-                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                       } else {
                         jobC.resetDetailJobState();
-                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null);
+                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                       }
                     },
                   ),

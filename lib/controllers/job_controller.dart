@@ -128,7 +128,7 @@ class JobController extends GetxController {
     }
   }
 
-  Future<void> fetchJobs(int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date) async {
+  Future<void> fetchJobs(int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date, Map<String, String>? order) async {
     late Map<String, String> param = {};
     if (userId != null){
       param['user_id'] = userId.toString();
@@ -145,6 +145,10 @@ class JobController extends GetxController {
     if (date != null){
       final createdDate = ApiService.formatDateRange(date);
       param['created_at'] = createdDate;
+    }
+    if (order != null){
+      param['order'] = order['order'].toString();
+      param['order_by'] = order['order_by'].toString();
     }
     final response = await ApiService.handleWork(
       method: 'GET',
@@ -265,7 +269,7 @@ class JobController extends GetxController {
     }
   }
 
-  Future<String> create(int taskId, int taskTypeId, String floor, String info, XFile? imgBefore, XFile? imgAfter, String contentType)  async {
+  Future<String> create(int taskId, int taskTypeId, String floor, String info, XFile? imgBefore, XFile? imgAfter)  async {
     final List<http.MultipartFile> files = [];
     if (imgBefore != null) {
       final file = await http.MultipartFile.fromPath('image_before', imgBefore.path);
@@ -287,7 +291,7 @@ class JobController extends GetxController {
       method: 'POST',
       data: data,
       listFile: files,
-      contentType: contentType
+      contentType: 'multipart/form-data'
     );
 
     if (response != null && response['success'] == true) {

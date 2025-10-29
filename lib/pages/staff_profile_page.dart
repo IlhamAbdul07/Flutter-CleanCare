@@ -21,7 +21,7 @@ class StaffProfilePage extends StatelessWidget {
           Column(
             children: [
               GestureDetector(
-                onLongPress: () {
+                onTap: () {
                   final profile = authC.currentUser.value?.profile ?? '';
                   if (profile.isNotEmpty) {
                     AppDialog.showImagePopup(context, profile, isLocal: false);

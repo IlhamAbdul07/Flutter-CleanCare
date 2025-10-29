@@ -12,6 +12,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController emailC = TextEditingController();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -129,6 +130,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   height: 50,
                                   child: ElevatedButton(
                                     onPressed: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
                                       final response = await ApiService.sendForgotPasswordEmail(emailC.text);
                                       if (response != null && response['success'] == true) {
                                         Navigator.of(context).pop();
@@ -136,6 +140,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                       } else {
                                         AppSnackbarRaw.error('Email Tidak Terdaftar.');
                                       }
+                                      setState(() {
+                                        isLoading = false;
+                                      });
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColor.primaryBlue,
@@ -143,14 +150,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
-                                    child: const Text(
-                                      "Kirim Link Reset",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
+                                    child: isLoading
+                                      ? const SizedBox(
+                                          height: 18,
+                                          width: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
                                   ),
                                 ),
                                 const SizedBox(height: 20),

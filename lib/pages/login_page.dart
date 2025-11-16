@@ -222,7 +222,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '© 2025 Alip Aulia Harun. All rights reserved.',
+                            '© 2025 Alif Aulia Harun. All rights reserved.',
                             style: TextStyle(color: Colors.white54, fontSize: 12),
                           ),
                         ],

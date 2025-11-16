@@ -59,7 +59,7 @@ class JobController extends GetxController {
   Future<void> exportJobs(DateTime? date) async {
     try {
       if (Platform.isAndroid) {
-        final status = await Permission.storage.request();
+        final status = await Permission.manageExternalStorage.request();
         if (!status.isGranted) {
           AppSnackbarRaw.error('Izin penyimpanan ditolak.');
           return;

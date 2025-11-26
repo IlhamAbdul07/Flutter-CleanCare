@@ -50,8 +50,15 @@ class AddUserPage extends StatelessWidget {
                   ),
                   hintText: "Masukkan Nomor ID",
                 ),
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Wajib diisi' : null,
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return 'Wajib diisi';
+                  }
+                  if (val.length < 10) {
+                    return 'Minimal 10 karakter';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 18),
               Text(

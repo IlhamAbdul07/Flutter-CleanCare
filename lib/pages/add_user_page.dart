@@ -54,8 +54,8 @@ class AddUserPage extends StatelessWidget {
                   if (val == null || val.isEmpty) {
                     return 'Wajib diisi';
                   }
-                  if (val.length < 10) {
-                    return 'Minimal 10 karakter';
+                  if (val.length < 8) {
+                    return 'Minimal 8 karakter';
                   }
                   return null;
                 },

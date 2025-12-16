@@ -128,8 +128,11 @@ class JobController extends GetxController {
     }
   }
 
-  Future<void> fetchJobs(int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date, Map<String, String>? order) async {
+  Future<void> fetchJobs(bool? notFinished, int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date, Map<String, String>? order) async {
     late Map<String, String> param = {};
+    if (notFinished != null){
+      param['not_finished'] = 'yes';
+    }
     if (userId != null){
       param['user_id'] = userId.toString();
     }

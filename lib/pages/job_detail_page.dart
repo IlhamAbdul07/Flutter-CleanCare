@@ -140,6 +140,40 @@ class JobDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 5),
+                    Obx(() {
+                      final isDone = jobC.imageAfterC.value != '';
+
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: isDone ? Colors.green.shade50 : Colors.orange.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isDone ? Colors.green : Colors.orange,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              isDone ? Icons.check_circle : Icons.timelapse,
+                              color: isDone ? Colors.green : Colors.orange,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              isDone ? 'Status: Pekerjaan Sudah Selesai' : 'Status: Pekerjaan Belum Selesai',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: isDone ? Colors.green.shade800 : Colors.orange.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 20),
                     const Text(
                       'Nama Petugas',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),

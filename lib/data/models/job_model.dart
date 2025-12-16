@@ -12,6 +12,7 @@ class Jobs {
   final String userId;
   final String userName;
   final String userProfile;
+  final bool isDone;
 
   const Jobs({
     required this.id,
@@ -27,6 +28,7 @@ class Jobs {
     required this.userId,
     required this.userName,
     required this.userProfile,
+    required this.isDone,
   });
 
   factory Jobs.fromJson(Map<String, dynamic> json) {
@@ -44,6 +46,7 @@ class Jobs {
       userId: json['user']?['id']?.toString() ?? '',
       userName: json['user']?['name'] ?? '',
       userProfile: json['user']?['profile']?['view'] ?? '',
+      isDone: json['is_done'] ?? false,
     );
   }
 
@@ -62,6 +65,7 @@ class Jobs {
       'user_id': userId,
       'user_name': userName,
       'user_profile': userProfile,
+      'is_done': isDone,
     };
   }
 }

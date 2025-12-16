@@ -15,14 +15,14 @@ class CleaningDetailPage extends StatelessWidget {
     final jobC = Get.find<JobController>();
 
     Future.microtask(() {
-      jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
+      jobC.fetchJobs(null, null, taskId, null, floor, jobC.selectedDate.value,null);
     });
 
     return Scaffold(
       appBar: AppBar(title: Text(floor)),
       body: RefreshIndicator(
         onRefresh: () async {
-          await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
+          await jobC.fetchJobs(null, null, taskId, null, floor, jobC.selectedDate.value,null);
         },
         child: Obx(() {
           final jobs = jobC.jobs;
@@ -45,47 +45,60 @@ class CleaningDetailPage extends StatelessWidget {
             itemCount: jobs.length,
             itemBuilder: (context, index) {
               final job = jobs[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.grey.shade400,
-                    width: 1.0,
-                    style: BorderStyle.solid,
+              return Stack(
+                children: [
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Colors.grey.shade400,
+                        width: 1.0,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.cleaning_services),
+                      title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
+                      subtitle: Text(job.userName),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (job.unreadComment == true)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 1),
+                              child: Icon(
+                                Icons.chat_sharp,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          const Icon(Icons.arrow_forward_ios),
+                        ],
+                      ),
+                      onTap: () async {
+                        final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
+                        if (result == true) {
+                          jobC.resetDetailJobState();
+                          await jobC.fetchJobs(null, null, taskId, null, floor, jobC.selectedDate.value,null);
+                        } else {
+                          jobC.resetDetailJobState();
+                          await jobC.fetchJobs(null, null, taskId, null, floor, jobC.selectedDate.value,null);
+                        }
+                      },
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ListTile(
-                  leading: const Icon(Icons.cleaning_services),
-                  title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
-                  subtitle: Text(job.userName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (job.unreadComment == true)
-                        const Padding(
-                          padding: EdgeInsets.only(right: 1),
-                          child: Icon(
-                            Icons.chat_sharp,
-                            color: Colors.red,
-                            size: 20,
-                          ),
-                        ),
-                      const Icon(Icons.arrow_forward_ios),
-                    ],
+                  Positioned(
+                    top: 5,
+                    left: 2,
+                    child: Icon(
+                      job.isDone ? Icons.check_circle : Icons.timelapse,
+                      color: job.isDone ? Colors.green : Colors.orange,
+                      size: 21,
+                    ),
                   ),
-                  onTap: () async {
-                    final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
-                    if (result == true) {
-                      jobC.resetDetailJobState();
-                      await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
-                    } else {
-                      jobC.resetDetailJobState();
-                      await jobC.fetchJobs(null, taskId, null, floor, jobC.selectedDate.value,null);
-                    }
-                  },
-                ),
+                ],
               );
             },
           );

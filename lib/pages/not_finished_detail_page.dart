@@ -3,26 +3,22 @@ import 'package:flutter_cleancare/pages/job_detail_page.dart';
 import 'package:get/get.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 
-class NonCleaningDetailPage extends StatelessWidget {
-  final int taskId;
-  final int userId;
-  final String userName;
-
-  const NonCleaningDetailPage({super.key, required this.taskId, required this.userId, required this.userName});
+class NotFinishedDetailPage extends StatelessWidget {
+  const NotFinishedDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final jobC = Get.find<JobController>();
 
     Future.microtask(() {
-      jobC.fetchJobs(null, userId, taskId, null, null, jobC.selectedDate.value,null);
+      jobC.fetchJobs(true, null, null, null, null, jobC.selectedDate.value,null);
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(userName)),
+      appBar: AppBar(title: Text('Pekerjaan Belum Selesai')),
       body: RefreshIndicator(
         onRefresh: () async {
-          await jobC.fetchJobs(null, userId, taskId, null, null, jobC.selectedDate.value,null);
+          await jobC.fetchJobs(true, null, null, null, null, jobC.selectedDate.value,null);
         },
         child: Obx(() {
           final jobs = jobC.jobs;
@@ -33,7 +29,7 @@ class NonCleaningDetailPage extends StatelessWidget {
               children: const [
                 SizedBox(
                   height: 300,
-                  child: Center(child: Text("Belum ada data pekerjaan.")),
+                  child: Center(child: Text("Tidak ada pekerjaan yang belum selesai ☕")),
                 ),
               ],
             );
@@ -59,9 +55,9 @@ class NonCleaningDetailPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListTile(
-                      leading: const Icon(Icons.work),
+                      leading: Icon(int.parse(job.taskId) == 1 ? Icons.cleaning_services : Icons.work),
                       title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
-                      subtitle: Text(job.floor),
+                      subtitle: Text("${job.floor} • ${job.userName}"),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -81,10 +77,10 @@ class NonCleaningDetailPage extends StatelessWidget {
                         final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
                         if (result == true) {
                           jobC.resetDetailJobState();
-                          await jobC.fetchJobs(null, userId, taskId, null, null, jobC.selectedDate.value,null);
+                          await jobC.fetchJobs(true, null, null, null, null, jobC.selectedDate.value,null);
                         } else {
                           jobC.resetDetailJobState();
-                          await jobC.fetchJobs(null, userId, taskId, null, null, jobC.selectedDate.value,null);
+                          await jobC.fetchJobs(true, null, null, null, null, jobC.selectedDate.value,null);
                         }
                       },
                     ),

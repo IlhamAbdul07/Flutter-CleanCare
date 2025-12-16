@@ -15,7 +15,7 @@ class StaffHomePage extends StatelessWidget {
     final jobC = Get.put(JobController());
 
     Future.microtask(() {
-      jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+      jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
     });
 
     return Obx(() {
@@ -69,7 +69,7 @@ class StaffHomePage extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                          await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                         },
                         child: jobs.isEmpty
                             ? ListView(
@@ -86,61 +86,74 @@ class StaffHomePage extends StatelessWidget {
                                 itemCount: jobs.length,
                                 itemBuilder: (context, index) {
                                   final job = jobs[index];
-                                  return Card(
-                                    margin: const EdgeInsets.symmetric(vertical: 6),
-                                    elevation: 2,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        color: Colors.grey.shade400,
-                                        width: 1.0,
-                                        style: BorderStyle.solid,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: ListTile(
-                                      leading: Icon(
-                                        job.taskName.toLowerCase() == 'cleaning' ? Icons.cleaning_services_rounded : Icons.work_outline_rounded,
-                                        color: job.taskName.toLowerCase() == 'cleaning' ? Colors.teal : Colors.orange,
-                                        size: 30,
-                                      ),
-                                      title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
-                                      subtitle: Wrap(
-                                        children: [
-                                          Text(
-                                            "${job.taskName} • ${job.floor}\n",
+                                  return Stack(
+                                    children: [
+                                      Card(
+                                        margin: const EdgeInsets.symmetric(vertical: 6),
+                                        elevation: 2,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            color: Colors.grey.shade400,
+                                            width: 1.0,
+                                            style: BorderStyle.solid,
                                           ),
-                                          Text(
-                                            GeneralService.formatTanggalIndo(job.createdAt),
-                                            style: const TextStyle(fontStyle: FontStyle.italic,fontSize: 12),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: ListTile(
+                                          leading: Icon(
+                                            job.taskName.toLowerCase() == 'cleaning' ? Icons.cleaning_services_rounded : Icons.work_outline_rounded,
+                                            color: job.taskName.toLowerCase() == 'cleaning' ? Colors.teal : Colors.orange,
+                                            size: 30,
                                           ),
-                                        ],
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          if (job.unreadComment == true)
-                                            const Padding(
-                                              padding: EdgeInsets.only(right: 1),
-                                              child: Icon(
-                                                Icons.chat_sharp,
-                                                color: Colors.red,
-                                                size: 20,
+                                          title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
+                                          subtitle: Wrap(
+                                            children: [
+                                              Text(
+                                                "${job.taskName} • ${job.floor}\n",
                                               ),
-                                            ),
-                                          const Icon(Icons.arrow_forward_ios_rounded),
-                                        ],
+                                              Text(
+                                                GeneralService.formatTanggalIndo(job.createdAt),
+                                                style: const TextStyle(fontStyle: FontStyle.italic,fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (job.unreadComment == true)
+                                                const Padding(
+                                                  padding: EdgeInsets.only(right: 1),
+                                                  child: Icon(
+                                                    Icons.chat_sharp,
+                                                    color: Colors.red,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              const Icon(Icons.arrow_forward_ios_rounded),
+                                            ],
+                                          ),
+                                          onTap: () async {
+                                            final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
+                                            if (result == true) {
+                                              jobC.resetDetailJobState();
+                                              await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                                            } else {
+                                              jobC.resetDetailJobState();
+                                              await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                                            }
+                                          },
+                                        ),
                                       ),
-                                      onTap: () async {
-                                        final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
-                                        if (result == true) {
-                                          jobC.resetDetailJobState();
-                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-                                        } else {
-                                          jobC.resetDetailJobState();
-                                          await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-                                        }
-                                      },
-                                    ),
+                                      Positioned(
+                                        top: 6,
+                                        left: 2,
+                                        child: Icon(
+                                          job.isDone ? Icons.check_circle : Icons.timelapse,
+                                          color: job.isDone ? Colors.green : Colors.orange,
+                                          size: 25,
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 },
                               ),
@@ -173,10 +186,10 @@ class StaffHomePage extends StatelessWidget {
                       final result = await Get.to(() => const AddDetailJob());
                       if (result == true) {
                         jobC.resetDetailJobState();
-                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                       } else {
                         jobC.resetDetailJobState();
-                        await jobC.fetchJobs(int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
                       }
                     },
                   ),

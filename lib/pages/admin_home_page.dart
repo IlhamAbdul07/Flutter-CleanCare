@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
+import 'package:flutter_cleancare/pages/not_finished_detail_page.dart';
 import 'package:flutter_cleancare/pages/task_management_page.dart';
 import 'package:flutter_cleancare/widgets/cleaning_list_widget.dart';
 import 'package:flutter_cleancare/widgets/noncleaning_list_widget.dart';
@@ -145,6 +146,32 @@ class AdminHomePage extends StatelessWidget {
                           ),
                         ),
                         child: const Text('Non-Cleaning'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final result = await Get.to(() => NotFinishedDetailPage());
+                        if (result == true) {
+                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                        } else {
+                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: !jobC.isCleaning.value ? Colors.white : Colors.black,
+                        padding: EdgeInsets.zero, 
+                        minimumSize: const Size(50, 40), 
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, 
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.timelapse,
+                        color: Colors.white,
+                        size: 25,
                       ),
                     ),
                     const Spacer(),

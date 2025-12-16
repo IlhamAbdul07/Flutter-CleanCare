@@ -57,6 +57,9 @@ class AddUserPage extends StatelessWidget {
                   if (val.length < 8) {
                     return 'Minimal 8 karakter';
                   }
+                  if (val.length > 10) {
+                    return 'Maksimal 10 karakter';
+                  }
                   return null;
                 },
               ),

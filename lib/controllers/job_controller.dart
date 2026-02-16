@@ -104,10 +104,7 @@ class JobController extends GetxController {
     final response = await ApiService.handleWork(
       method: 'GET',
       dashboardAdmin: true,
-      params: {
-        'task_id': taskId.toString(),
-        'created_at': createdDate,
-      },
+      params: {'task_id': taskId.toString(), 'created_at': createdDate},
     );
 
     if (response != null && response['success'] == true) {
@@ -128,35 +125,40 @@ class JobController extends GetxController {
     }
   }
 
-  Future<void> fetchJobs(bool? notFinished, int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date, Map<String, String>? order) async {
-    late Map<String, String> param = {};
-    if (notFinished != null){
+  Future<void> fetchJobs(
+    bool? notFinished,
+    int? userId,
+    int? taskId,
+    int? taskTypeId,
+    String? floor,
+    DateTime? date,
+    Map<String, String>? order,
+  ) async {
+    late Map<String, String> param = {'no_paging': 'yes'};
+    if (notFinished != null) {
       param['not_finished'] = 'yes';
     }
-    if (userId != null){
+    if (userId != null) {
       param['user_id'] = userId.toString();
     }
-    if (taskId != null){
+    if (taskId != null) {
       param['task_id'] = taskId.toString();
     }
-    if (taskTypeId != null){
+    if (taskTypeId != null) {
       param['task_type_id'] = taskTypeId.toString();
     }
-    if (floor != null){
+    if (floor != null) {
       param['floor'] = floor;
     }
-    if (date != null){
+    if (date != null) {
       final createdDate = ApiService.formatDateRange(date);
       param['created_at'] = createdDate;
     }
-    if (order != null){
+    if (order != null) {
       param['order'] = order['order'].toString();
       param['order_by'] = order['order_by'].toString();
     }
-    final response = await ApiService.handleWork(
-      method: 'GET',
-      params: param,
-    );
+    final response = await ApiService.handleWork(method: 'GET', params: param);
     if (response != null && response['success'] == true) {
       final data = response['data'];
       final List<dynamic> jobList = data['data'] ?? [];
@@ -164,26 +166,25 @@ class JobController extends GetxController {
       jobs.value = jobsData;
     } else {
       final errorData = response?['data'];
-      final message = errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
+      final message =
+          errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
       AppSnackbarRaw.error(message);
     }
   }
 
   Future<void> getById(int id) async {
-    final response = await ApiService.handleWork(
-      method: 'GET',
-      workId: id,
-    );
+    final response = await ApiService.handleWork(method: 'GET', workId: id);
     if (response != null && response['success'] == true) {
       final data = response['data']['data'];
       if (data != null) {
         final singleJob = JobSingle.fromJson(data);
         jobSingle.value = singleJob;
-      }else{
+      } else {
         jobSingle.value = null;
-        final errorMessage = response!['data']?['message'] ??
-        response['message'] ??
-        'Terjadi kesalahan saat registrasi.';
+        final errorMessage =
+            response!['data']?['message'] ??
+            response['message'] ??
+            'Terjadi kesalahan saat registrasi.';
         AppSnackbarRaw.error(errorMessage);
       }
     }
@@ -228,14 +229,26 @@ class JobController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<String> updateById(int id, Map<String, dynamic> data, XFile? imgBefore, XFile? imgAfter, String contentType) async {
+  Future<String> updateById(
+    int id,
+    Map<String, dynamic> data,
+    XFile? imgBefore,
+    XFile? imgAfter,
+    String contentType,
+  ) async {
     final List<http.MultipartFile> files = [];
     if (imgBefore != null) {
-      final file = await http.MultipartFile.fromPath('image_before', imgBefore.path);
+      final file = await http.MultipartFile.fromPath(
+        'image_before',
+        imgBefore.path,
+      );
       files.add(file);
     }
     if (imgAfter != null) {
-      final file = await http.MultipartFile.fromPath('image_after', imgAfter.path);
+      final file = await http.MultipartFile.fromPath(
+        'image_after',
+        imgAfter.path,
+      );
       files.add(file);
     }
 
@@ -244,46 +257,60 @@ class JobController extends GetxController {
       workId: id,
       data: data,
       listFile: files,
-      contentType: contentType
+      contentType: contentType,
     );
 
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {
-      final errorMessage = response!['data']?['message'] ??
-        response['message'] ??
-        'Terjadi kesalahan saat registrasi.';
+      final errorMessage =
+          response!['data']?['message'] ??
+          response['message'] ??
+          'Terjadi kesalahan saat registrasi.';
       return errorMessage;
     }
   }
 
   Future<String> deleteById(int id) async {
-    final response = await ApiService.handleWork(
-      method: 'DELETE',
-      workId: id,
-    );
+    final response = await ApiService.handleWork(method: 'DELETE', workId: id);
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {
-      final errorMessage = response!['data']?['message'] ??
-        response['message'] ??
-        'Terjadi kesalahan saat registrasi.';
+      final errorMessage =
+          response!['data']?['message'] ??
+          response['message'] ??
+          'Terjadi kesalahan saat registrasi.';
       return errorMessage;
     }
   }
 
-  Future<String> create(int taskId, int taskTypeId, String floor, String info, XFile? imgBefore, XFile? imgAfter)  async {
+  Future<String> create(
+    int userId,
+    int taskId,
+    int taskTypeId,
+    String floor,
+    String info,
+    XFile? imgBefore,
+    XFile? imgAfter,
+  ) async {
     final List<http.MultipartFile> files = [];
     if (imgBefore != null) {
-      final file = await http.MultipartFile.fromPath('image_before', imgBefore.path);
+      final file = await http.MultipartFile.fromPath(
+        'image_before',
+        imgBefore.path,
+      );
       files.add(file);
     }
     if (imgAfter != null) {
-      final file = await http.MultipartFile.fromPath('image_after', imgAfter.path);
+      final file = await http.MultipartFile.fromPath(
+        'image_after',
+        imgAfter.path,
+      );
       files.add(file);
     }
 
     final Map<String, dynamic> data = {
+      'user_id': userId,
       'task_id': taskId,
       'task_type_id': taskTypeId,
       'floor': floor,
@@ -294,15 +321,16 @@ class JobController extends GetxController {
       method: 'POST',
       data: data,
       listFile: files,
-      contentType: 'multipart/form-data'
+      contentType: 'multipart/form-data',
     );
 
     if (response != null && response['success'] == true) {
       return 'ok';
     } else {
-      final errorMessage = response!['data']?['message'] ??
-        response['message'] ??
-        'Terjadi kesalahan saat registrasi.';
+      final errorMessage =
+          response!['data']?['message'] ??
+          response['message'] ??
+          'Terjadi kesalahan saat registrasi.';
       return errorMessage;
     }
   }

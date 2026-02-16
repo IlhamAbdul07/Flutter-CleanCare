@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
+import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/not_finished_detail_page.dart';
 import 'package:flutter_cleancare/pages/task_management_page.dart';
 import 'package:flutter_cleancare/widgets/cleaning_list_widget.dart';
@@ -43,18 +44,25 @@ class AdminHomePage extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 'Halo ${currentUser.name.replaceAll(" (Pest Control)", "")}, semoga harimu menyenangkan.',
-                style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.primary,),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
           ),
         ),
         body: RefreshIndicator(
           onRefresh: () async {
-            await jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+            await jobC.refreshDashboard(
+              jobC.isCleaning.value,
+              jobC.selectedDate.value,
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(height: 15),
                 Row(
@@ -66,7 +74,7 @@ class AdminHomePage extends StatelessWidget {
                         final formattedDate = selectedDate != null
                             ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
                             : "Pilih Tanggal";
-          
+
                         return TextField(
                           readOnly: true,
                           onTap: () => jobC.pickDate(context),
@@ -84,9 +92,9 @@ class AdminHomePage extends StatelessWidget {
                         );
                       }),
                     ),
-          
+
                     const SizedBox(width: 10),
-          
+
                     // Tombol kanan: download
                     Expanded(
                       child: ElevatedButton.icon(
@@ -151,19 +159,29 @@ class AdminHomePage extends StatelessWidget {
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () async {
-                        final result = await Get.to(() => NotFinishedDetailPage());
+                        final result = await Get.to(
+                          () => NotFinishedDetailPage(),
+                        );
                         if (result == true) {
-                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                          jobC.refreshDashboard(
+                            jobC.isCleaning.value,
+                            jobC.selectedDate.value,
+                          );
                         } else {
-                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                          jobC.refreshDashboard(
+                            jobC.isCleaning.value,
+                            jobC.selectedDate.value,
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
-                        foregroundColor: !jobC.isCleaning.value ? Colors.white : Colors.black,
-                        padding: EdgeInsets.zero, 
-                        minimumSize: const Size(50, 40), 
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, 
+                        foregroundColor: !jobC.isCleaning.value
+                            ? Colors.white
+                            : Colors.black,
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(50, 40),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -179,9 +197,15 @@ class AdminHomePage extends StatelessWidget {
                       onPressed: () async {
                         final result = await Get.to(() => TaskManagementPage());
                         if (result == true) {
-                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                          jobC.refreshDashboard(
+                            jobC.isCleaning.value,
+                            jobC.selectedDate.value,
+                          );
                         } else {
-                          jobC.refreshDashboard(jobC.isCleaning.value, jobC.selectedDate.value);
+                          jobC.refreshDashboard(
+                            jobC.isCleaning.value,
+                            jobC.selectedDate.value,
+                          );
                         }
                       },
                       icon: const Icon(Icons.workspaces_filled),
@@ -196,6 +220,50 @@ class AdminHomePage extends StatelessWidget {
                       ? CleaningListWidget()
                       : NonCleaningListWidget();
                 }),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Positioned(
+                    bottom: 16,
+                    right: 15,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        color: Colors.white,
+                        iconSize: 28,
+                        icon: const Icon(Icons.add),
+                        tooltip: 'Tambah Pekerjaan',
+                        onPressed: () async {
+                          final result = await Get.to(
+                            () => const AddDetailJob(),
+                          );
+                          if (result == true) {
+                            jobC.resetDetailJobState();
+                            await jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          } else {
+                            jobC.resetDetailJobState();
+                            await jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

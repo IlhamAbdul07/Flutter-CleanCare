@@ -11,28 +11,31 @@ class StaffJobController extends GetxController {
   //   super.onInit();
   // }
 
-  Future<void> fetchJobs(int? userId, int? taskId, int? taskTypeId, String? floor, DateTime? date) async {
-    late Map<String, String> param = {};
-    if (userId != null){
+  Future<void> fetchJobs(
+    int? userId,
+    int? taskId,
+    int? taskTypeId,
+    String? floor,
+    DateTime? date,
+  ) async {
+    late Map<String, String> param = {'no_paging': 'yes'};
+    if (userId != null) {
       param['user_id'] = userId.toString();
     }
-    if (taskId != null){
+    if (taskId != null) {
       param['task_id'] = taskId.toString();
     }
-    if (taskTypeId != null){
+    if (taskTypeId != null) {
       param['task_type_id'] = taskTypeId.toString();
     }
-    if (floor != null){
+    if (floor != null) {
       param['floor'] = floor;
     }
-    if (date != null){
+    if (date != null) {
       final createdDate = ApiService.formatDateRange(date);
       param['created_at'] = createdDate;
     }
-    final response = await ApiService.handleWork(
-      method: 'GET',
-      params: param,
-    );
+    final response = await ApiService.handleWork(method: 'GET', params: param);
     if (response != null && response['success'] == true) {
       final data = response['data'];
       final List<dynamic> jobList = data['data'] ?? [];
@@ -40,7 +43,8 @@ class StaffJobController extends GetxController {
       jobs.value = jobsData;
     } else {
       final errorData = response?['data'];
-      final message = errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
+      final message =
+          errorData?['message'] ?? 'Terjadi kesalahan tidak diketahui';
       AppSnackbarRaw.error(message);
     }
   }

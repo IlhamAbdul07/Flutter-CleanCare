@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/services/general_service.dart';
-import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/job_detail_page.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +14,15 @@ class StaffHomePage extends StatelessWidget {
     final jobC = Get.put(JobController());
 
     Future.microtask(() {
-      jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+      jobC.fetchJobs(
+        null,
+        int.parse(authC.currentUser.value!.id),
+        null,
+        null,
+        null,
+        null,
+        {'order': 'created_at', 'order_by': 'asc'},
+      );
     });
 
     return Obx(() {
@@ -69,7 +76,15 @@ class StaffHomePage extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                          await jobC.fetchJobs(
+                            null,
+                            int.parse(authC.currentUser.value!.id),
+                            null,
+                            null,
+                            null,
+                            null,
+                            {'order': 'created_at', 'order_by': 'asc'},
+                          );
                         },
                         child: jobs.isEmpty
                             ? ListView(
@@ -77,7 +92,9 @@ class StaffHomePage extends StatelessWidget {
                                 children: const [
                                   SizedBox(
                                     height: 300,
-                                    child: Center(child: Text("Belum ada data pekerjaan.")),
+                                    child: Center(
+                                      child: Text("Belum ada data pekerjaan."),
+                                    ),
                                   ),
                                 ],
                               )
@@ -89,7 +106,9 @@ class StaffHomePage extends StatelessWidget {
                                   return Stack(
                                     children: [
                                       Card(
-                                        margin: const EdgeInsets.symmetric(vertical: 6),
+                                        margin: const EdgeInsets.symmetric(
+                                          vertical: 6,
+                                        ),
                                         elevation: 2,
                                         shape: RoundedRectangleBorder(
                                           side: BorderSide(
@@ -97,23 +116,43 @@ class StaffHomePage extends StatelessWidget {
                                             width: 1.0,
                                             style: BorderStyle.solid,
                                           ),
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: ListTile(
                                           leading: Icon(
-                                            job.taskName.toLowerCase() == 'cleaning' ? Icons.cleaning_services_rounded : Icons.work_outline_rounded,
-                                            color: job.taskName.toLowerCase() == 'cleaning' ? Colors.teal : Colors.orange,
+                                            job.taskName.toLowerCase() ==
+                                                    'cleaning'
+                                                ? Icons
+                                                      .cleaning_services_rounded
+                                                : Icons.work_outline_rounded,
+                                            color:
+                                                job.taskName.toLowerCase() ==
+                                                    'cleaning'
+                                                ? Colors.teal
+                                                : Colors.orange,
                                             size: 30,
                                           ),
-                                          title: Text(job.taskTypeName,style: TextStyle(fontWeight: FontWeight.bold),),
+                                          title: Text(
+                                            job.taskTypeName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           subtitle: Wrap(
                                             children: [
                                               Text(
                                                 "${job.taskName} • ${job.floor}\n",
                                               ),
                                               Text(
-                                                GeneralService.formatTanggalIndo(job.createdAt),
-                                                style: const TextStyle(fontStyle: FontStyle.italic,fontSize: 12),
+                                                GeneralService.formatTanggalIndo(
+                                                  job.createdAt,
+                                                ),
+                                                style: const TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -122,24 +161,58 @@ class StaffHomePage extends StatelessWidget {
                                             children: [
                                               if (job.unreadComment == true)
                                                 const Padding(
-                                                  padding: EdgeInsets.only(right: 1),
+                                                  padding: EdgeInsets.only(
+                                                    right: 1,
+                                                  ),
                                                   child: Icon(
                                                     Icons.chat_sharp,
                                                     color: Colors.red,
                                                     size: 20,
                                                   ),
                                                 ),
-                                              const Icon(Icons.arrow_forward_ios_rounded),
+                                              const Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                              ),
                                             ],
                                           ),
                                           onTap: () async {
-                                            final result = await Get.to(() => JobDetailPage(jobId: int.parse(job.id),));
+                                            final result = await Get.to(
+                                              () => JobDetailPage(
+                                                jobId: int.parse(job.id),
+                                              ),
+                                            );
                                             if (result == true) {
                                               jobC.resetDetailJobState();
-                                              await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                                              await jobC.fetchJobs(
+                                                null,
+                                                int.parse(
+                                                  authC.currentUser.value!.id,
+                                                ),
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                {
+                                                  'order': 'created_at',
+                                                  'order_by': 'asc',
+                                                },
+                                              );
                                             } else {
                                               jobC.resetDetailJobState();
-                                              await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                                              await jobC.fetchJobs(
+                                                null,
+                                                int.parse(
+                                                  authC.currentUser.value!.id,
+                                                ),
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                {
+                                                  'order': 'created_at',
+                                                  'order_by': 'asc',
+                                                },
+                                              );
                                             }
                                           },
                                         ),
@@ -148,8 +221,12 @@ class StaffHomePage extends StatelessWidget {
                                         top: 6,
                                         left: 2,
                                         child: Icon(
-                                          job.isDone ? Icons.check_circle : Icons.timelapse,
-                                          color: job.isDone ? Colors.green : Colors.orange,
+                                          job.isDone
+                                              ? Icons.check_circle
+                                              : Icons.timelapse,
+                                          color: job.isDone
+                                              ? Colors.green
+                                              : Colors.orange,
                                           size: 25,
                                         ),
                                       ),
@@ -162,39 +239,39 @@ class StaffHomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              Positioned(
-                bottom: 16,
-                right: 5,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                  ),
-                  child: IconButton(
-                    color: Colors.white,
-                    iconSize: 28,
-                    icon: const Icon(Icons.add),
-                    tooltip: 'Tambah Pekerjaan',
-                    onPressed: () async {
-                      final result = await Get.to(() => const AddDetailJob());
-                      if (result == true) {
-                        jobC.resetDetailJobState();
-                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-                      } else {
-                        jobC.resetDetailJobState();
-                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-                      }
-                    },
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   bottom: 16,
+              //   right: 5,
+              //   child: Container(
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).colorScheme.primary,
+              //       borderRadius: BorderRadius.circular(12),
+              //       boxShadow: [
+              //         BoxShadow(
+              //           color: Colors.black.withOpacity(0.2),
+              //           blurRadius: 8,
+              //           offset: const Offset(2, 2),
+              //         ),
+              //       ],
+              //     ),
+              //     child: IconButton(
+              //       color: Colors.white,
+              //       iconSize: 28,
+              //       icon: const Icon(Icons.add),
+              //       tooltip: 'Tambah Pekerjaan',
+              //       onPressed: () async {
+              //         final result = await Get.to(() => const AddDetailJob());
+              //         if (result == true) {
+              //           jobC.resetDetailJobState();
+              //           await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+              //         } else {
+              //           jobC.resetDetailJobState();
+              //           await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+              //         }
+              //       },
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -202,5 +279,3 @@ class StaffHomePage extends StatelessWidget {
     });
   }
 }
-
-

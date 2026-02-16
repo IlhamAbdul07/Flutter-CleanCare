@@ -641,6 +641,9 @@ class JobDetailPage extends StatelessWidget {
                                         XFile? imgBefore;
                                         XFile? imgAfter;
                                         String contentType = 'application/json';
+                                        if (selectedUser.value != singleJob.userId) {
+                                          data['user_id'] = int.parse(selectedUser.value);
+                                        }
                                         if (selectedJob.value !=
                                             (singleJob.taskId == '1'
                                                 ? 'Cleaning'

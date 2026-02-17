@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/controllers/tasks_controller.dart';
-import 'package:flutter_cleancare/controllers/users_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/widgets/app_dialog.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
@@ -15,14 +15,15 @@ class AddDetailJob extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authC = Get.find<AuthController>();
     final jobC = Get.put(JobController());
     final jobTypeC = Get.put(TaskController());
-    final usersC = Get.put(UserController());
     final taskLoading = false.obs;
 
+    final userLogin = authC.currentUser.value;
+    final nameC = TextEditingController();
     final jobList = ['Cleaning', 'Non-Cleaning'];
     final floorList = List.generate(20, (index) => 'Lantai ${index + 1}');
-    final selectedUser = ''.obs;
     final selectedJob = ''.obs;
     final selectedJobType = ''.obs;
     final selectedFloor = ''.obs;
@@ -30,11 +31,11 @@ class AddDetailJob extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final selectedImageBeforeError = ''.obs;
 
+    nameC.text = userLogin!.name;
     selectedJob.value = jobList.first;
     selectedFloor.value = floorList.first;
     taskLoading.value = true;
     Future.microtask(() {
-      selectedUser.value = usersC.users.first.id;
       jobTypeC.setFilterTask(selectedJob.value == 'Cleaning' ? 1 : 2).then((
         value,
       ) {
@@ -64,34 +65,18 @@ class AddDetailJob extends StatelessWidget {
                   'Nama Petugas',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
-                ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButtonFormField<String>(
-                    initialValue: selectedUser.value,
-                    isExpanded: true,
-                    alignment: AlignmentDirectional.centerStart,
-                    menuMaxHeight: 200,
+                AbsorbPointer(
+                  absorbing: true,
+                  child: TextFormField(
+                    controller: nameC,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                       ),
+                      hintText: "",
                     ),
-                    items: usersC.users
-                        .map(
-                          (user) => DropdownMenuItem(
-                            value: user.id,
-                            child: Text(user.name),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) async {
-                      if (val != null) {
-                        selectedUser.value = val;
-                      }
-                    },
                   ),
                 ),
-
                 //
                 const SizedBox(height: 24),
                 Text(
@@ -414,6 +399,10 @@ class AddDetailJob extends StatelessWidget {
                           ),
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
+                        if (jobC.selectedImageBeforeEdit.value == null) {
+                          selectedImageBeforeError.value = '(Wajib diunggah)';
+                          return;
+                        }
                         AppDialog.confirm(
                           title: "Simpan Data Pekerjaan",
                           message:
@@ -431,7 +420,6 @@ class AddDetailJob extends StatelessWidget {
                             }
                             jobC.setIsLoading(true);
                             final result = await jobC.create(
-                              int.parse(selectedUser.value),
                               selectedJob.value == 'Cleaning' ? 1 : 2,
                               int.parse(
                                 jobTypeC.tasks

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
-import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/not_finished_detail_page.dart';
 import 'package:flutter_cleancare/pages/task_management_page.dart';
 import 'package:flutter_cleancare/widgets/cleaning_list_widget.dart';
@@ -62,7 +61,6 @@ class AdminHomePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(height: 15),
                 Row(
@@ -232,50 +230,6 @@ class AdminHomePage extends StatelessWidget {
                       ? CleaningListWidget()
                       : NonCleaningListWidget();
                 }),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Positioned(
-                    bottom: 16,
-                    right: 15,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        color: Colors.white,
-                        iconSize: 28,
-                        icon: const Icon(Icons.add),
-                        tooltip: 'Tambah Pekerjaan',
-                        onPressed: () async {
-                          final result = await Get.to(
-                            () => const AddDetailJob(),
-                          );
-                          if (result == true) {
-                            jobC.resetDetailJobState();
-                            await jobC.refreshDashboard(
-                              jobC.isCleaning.value,
-                              jobC.selectedDate.value,
-                            );
-                          } else {
-                            jobC.resetDetailJobState();
-                            await jobC.refreshDashboard(
-                              jobC.isCleaning.value,
-                              jobC.selectedDate.value,
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

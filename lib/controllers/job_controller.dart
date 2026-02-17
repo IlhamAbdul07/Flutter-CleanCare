@@ -285,7 +285,6 @@ class JobController extends GetxController {
   }
 
   Future<String> create(
-    int userId,
     int taskId,
     int taskTypeId,
     String floor,
@@ -310,7 +309,6 @@ class JobController extends GetxController {
     }
 
     final Map<String, dynamic> data = {
-      'user_id': userId,
       'task_id': taskId,
       'task_type_id': taskTypeId,
       'floor': floor,

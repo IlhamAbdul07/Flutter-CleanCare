@@ -4,7 +4,6 @@ import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/comment_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/controllers/tasks_controller.dart';
-import 'package:flutter_cleancare/controllers/users_controller.dart';
 import 'package:flutter_cleancare/core/theme/app_color.dart';
 import 'package:flutter_cleancare/widgets/app_dialog.dart';
 import 'package:flutter_cleancare/widgets/app_snackbar_raw.dart';
@@ -21,16 +20,15 @@ class JobDetailPage extends StatelessWidget {
     final jobC = Get.put(JobController());
     final jobTypeC = Get.put(TaskController());
     final commentC = Get.put(CommentController());
-    final usersC = Get.put(UserController());
 
     final isAdmin = authC.isAdmin;
     final userLogin = authC.currentUser.value!.id;
+    final nameC = TextEditingController();
     final jobList = ['Cleaning', 'Non-Cleaning'];
     final floorList = List.generate(20, (index) => 'Lantai ${index + 1}');
     final selectedJob = ''.obs;
     final selectedJobType = ''.obs;
     final selectedFloor = ''.obs;
-    final selectedUser = ''.obs;
     final infoC = TextEditingController();
     final textCommentC = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -113,7 +111,7 @@ class JobDetailPage extends StatelessWidget {
           );
         }
 
-        selectedUser.value = singleJob.userId;
+        nameC.text = singleJob.userName;
         selectedJob.value = int.parse(singleJob.taskId) == 1
             ? 'Cleaning'
             : 'Non-Cleaning';
@@ -195,34 +193,14 @@ class JobDetailPage extends StatelessWidget {
                         ),
                       ),
                       AbsorbPointer(
-                        absorbing: isAdmin ? false : true,
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButtonFormField<String>(
-                            initialValue: selectedUser.value,
-                            isExpanded: true,
-                            alignment: AlignmentDirectional.centerStart,
-                            menuMaxHeight: 200,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                              ),
+                        absorbing: true,
+                        child: TextFormField(
+                          controller: nameC,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
                             ),
-                            items: usersC.users
-                                .map(
-                                  (user) => DropdownMenuItem(
-                                    value: user.id,
-                                    child: Text(user.name),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (val) async {
-                              if (val != null) {
-                                selectedUser.value = val;
-                              }
-                            },
+                            hintText: "",
                           ),
                         ),
                       ),
@@ -235,7 +213,7 @@ class JobDetailPage extends StatelessWidget {
                         ),
                       ),
                       AbsorbPointer(
-                        absorbing: isAdmin ? false : true,
+                        absorbing: isAdmin,
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: DropdownButtonFormField<String>(
@@ -253,7 +231,7 @@ class JobDetailPage extends StatelessWidget {
                             items: jobList
                                 .map(
                                   (job) => DropdownMenuItem(
-                                    enabled: isAdmin,
+                                    enabled: !isAdmin,
                                     value: job,
                                     child: Text(job),
                                   ),
@@ -281,7 +259,7 @@ class JobDetailPage extends StatelessWidget {
                         ),
                       ),
                       AbsorbPointer(
-                        absorbing: isAdmin ? false : true,
+                        absorbing: isAdmin,
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: DropdownButtonFormField<String>(
@@ -300,7 +278,7 @@ class JobDetailPage extends StatelessWidget {
                                 .map(
                                   (t) => DropdownMenuItem(
                                     value: t.name,
-                                    enabled: isAdmin,
+                                    enabled: !isAdmin,
                                     child: Text(t.name),
                                   ),
                                 )
@@ -320,7 +298,7 @@ class JobDetailPage extends StatelessWidget {
                         ),
                       ),
                       AbsorbPointer(
-                        absorbing: isAdmin ? false : true,
+                        absorbing: isAdmin,
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: DropdownButtonFormField<String>(
@@ -339,7 +317,7 @@ class JobDetailPage extends StatelessWidget {
                                 .map(
                                   (floor) => DropdownMenuItem(
                                     value: floor,
-                                    enabled: isAdmin,
+                                    enabled: !isAdmin,
                                     child: Text(floor),
                                   ),
                                 )
@@ -359,7 +337,7 @@ class JobDetailPage extends StatelessWidget {
                         ),
                       ),
                       AbsorbPointer(
-                        absorbing: isAdmin ? false : true,
+                        absorbing: isAdmin,
                         child: TextFormField(
                           controller: infoC,
                           minLines: 3,
@@ -617,121 +595,118 @@ class JobDetailPage extends StatelessWidget {
                       ],
                       const SizedBox(height: 15),
 
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.primaryBlue,
-                                  iconColor: Colors.white,
-                                  foregroundColor: Colors.white,
-                                ),
-                                onPressed: () async {
-                                  if (formKey.currentState!.validate()) {
-                                    AppDialog.confirm(
-                                      title: "Simpan Data Pekerjaan",
-                                      message:
-                                          "Apakah kamu yakin ingin menyimpan perubahan?",
-                                      confirmColor: Colors.blue,
-                                      icon: Icons.save,
-                                      onConfirm: () async {
-                                        final Map<String, dynamic> data = {};
-                                        XFile? imgBefore;
-                                        XFile? imgAfter;
-                                        String contentType = 'application/json';
-                                        if (selectedUser.value != singleJob.userId) {
-                                          data['user_id'] = int.parse(selectedUser.value);
-                                        }
-                                        if (selectedJob.value !=
-                                            (singleJob.taskId == '1'
-                                                ? 'Cleaning'
-                                                : 'Non-Cleaning')) {
-                                          data['task_id'] =
-                                              selectedJob.value == 'Cleaning'
-                                              ? 1
-                                              : 2;
-                                        }
-                                        if (selectedJobType.value !=
-                                            singleJob.taskTypeName) {
-                                          data['task_type_id'] = int.parse(
-                                            jobTypeC.tasks
-                                                .where(
-                                                  (task) =>
-                                                      task.name ==
-                                                      selectedJobType.value,
-                                                )
-                                                .first
-                                                .id,
-                                          );
-                                        }
-                                        if (selectedFloor.value !=
-                                            singleJob.floor) {
-                                          data['floor'] = selectedFloor.value;
-                                        }
-                                        if (infoC.text != singleJob.info) {
-                                          data['info'] = infoC.text;
-                                        }
-                                        if (jobC
+                      if (!isAdmin)...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColor.primaryBlue,
+                                    iconColor: Colors.white,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () async {
+                                    if (formKey.currentState!.validate()) {
+                                      AppDialog.confirm(
+                                        title: "Simpan Data Pekerjaan",
+                                        message:
+                                            "Apakah kamu yakin ingin menyimpan perubahan?",
+                                        confirmColor: Colors.blue,
+                                        icon: Icons.save,
+                                        onConfirm: () async {
+                                          final Map<String, dynamic> data = {};
+                                          XFile? imgBefore;
+                                          XFile? imgAfter;
+                                          String contentType = 'application/json';
+                                          if (selectedJob.value !=
+                                              (singleJob.taskId == '1'
+                                                  ? 'Cleaning'
+                                                  : 'Non-Cleaning')) {
+                                            data['task_id'] =
+                                                selectedJob.value == 'Cleaning'
+                                                ? 1
+                                                : 2;
+                                          }
+                                          if (selectedJobType.value !=
+                                              singleJob.taskTypeName) {
+                                            data['task_type_id'] = int.parse(
+                                              jobTypeC.tasks
+                                                  .where(
+                                                    (task) =>
+                                                        task.name ==
+                                                        selectedJobType.value,
+                                                  )
+                                                  .first
+                                                  .id,
+                                            );
+                                          }
+                                          if (selectedFloor.value !=
+                                              singleJob.floor) {
+                                            data['floor'] = selectedFloor.value;
+                                          }
+                                          if (infoC.text != singleJob.info) {
+                                            data['info'] = infoC.text;
+                                          }
+                                          if (jobC
+                                                  .selectedImageBeforeEdit
+                                                  .value !=
+                                              null) {
+                                            imgBefore = jobC
                                                 .selectedImageBeforeEdit
-                                                .value !=
-                                            null) {
-                                          imgBefore = jobC
-                                              .selectedImageBeforeEdit
-                                              .value;
-                                          contentType = 'multipart/form-data';
-                                        }
-                                        // if (jobC.imageBeforeC.value.isEmpty && singleJob.imageBefore.isNotEmpty) {
-                                        //   data['delete_image_before'] = 'yes';
-                                        // }
-                                        if (jobC.selectedImageAfterEdit.value !=
-                                            null) {
-                                          imgAfter =
-                                              jobC.selectedImageAfterEdit.value;
-                                          contentType = 'multipart/form-data';
-                                        }
-                                        // if (jobC.imageAfterC.value.isEmpty && singleJob.imageAfter.isNotEmpty) {
-                                        //   data['delete_image_after'] = 'yes';
-                                        // }
-                                        jobC.setIsLoading(true);
-                                        final result = await jobC.updateById(
-                                          jobId,
-                                          data,
-                                          imgBefore,
-                                          imgAfter,
-                                          contentType,
-                                        );
-                                        if (result == 'ok') {
-                                          await jobC.getById(jobId);
-                                          AppSnackbarRaw.success(
-                                            'Berhasil menyimpan data pekerjaan!',
+                                                .value;
+                                            contentType = 'multipart/form-data';
+                                          }
+                                          // if (jobC.imageBeforeC.value.isEmpty && singleJob.imageBefore.isNotEmpty) {
+                                          //   data['delete_image_before'] = 'yes';
+                                          // }
+                                          if (jobC.selectedImageAfterEdit.value !=
+                                              null) {
+                                            imgAfter =
+                                                jobC.selectedImageAfterEdit.value;
+                                            contentType = 'multipart/form-data';
+                                          }
+                                          // if (jobC.imageAfterC.value.isEmpty && singleJob.imageAfter.isNotEmpty) {
+                                          //   data['delete_image_after'] = 'yes';
+                                          // }
+                                          jobC.setIsLoading(true);
+                                          final result = await jobC.updateById(
+                                            jobId,
+                                            data,
+                                            imgBefore,
+                                            imgAfter,
+                                            contentType,
                                           );
-                                        } else {
-                                          AppSnackbarRaw.error(result);
-                                        }
-                                        jobC.setIsLoading(false);
-                                      },
-                                    );
-                                  }
-                                },
-                                icon: jobC.isLoading.value
-                                    ? const SizedBox(
-                                        height: 18,
-                                        width: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : const Icon(Icons.save),
-                                label: jobC.isLoading.value
-                                    ? const Text('Tunggu')
-                                    : const Text('Simpan'),
+                                          if (result == 'ok') {
+                                            await jobC.getById(jobId);
+                                            AppSnackbarRaw.success(
+                                              'Berhasil menyimpan data pekerjaan!',
+                                            );
+                                          } else {
+                                            AppSnackbarRaw.error(result);
+                                          }
+                                          jobC.setIsLoading(false);
+                                        },
+                                      );
+                                    }
+                                  },
+                                  icon: jobC.isLoading.value
+                                      ? const SizedBox(
+                                          height: 18,
+                                          width: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(Icons.save),
+                                  label: jobC.isLoading.value
+                                      ? const Text('Tunggu')
+                                      : const Text('Simpan'),
+                                ),
                               ),
                             ),
-                          ),
-                          if (isAdmin) ...[
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -769,8 +744,8 @@ class JobDetailPage extends StatelessWidget {
                               ),
                             ),
                           ],
-                        ],
-                      ),
+                        ),
+                      ],
 
                       const Divider(height: 32, thickness: 8),
 

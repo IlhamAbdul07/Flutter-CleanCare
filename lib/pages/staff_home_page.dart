@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cleancare/controllers/auth_controller.dart';
 import 'package:flutter_cleancare/controllers/job_controller.dart';
 import 'package:flutter_cleancare/core/services/general_service.dart';
+import 'package:flutter_cleancare/pages/add_detail_job.dart';
 import 'package:flutter_cleancare/pages/job_detail_page.dart';
 import 'package:get/get.dart';
 
@@ -239,39 +240,39 @@ class StaffHomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              // Positioned(
-              //   bottom: 16,
-              //   right: 5,
-              //   child: Container(
-              //     decoration: BoxDecoration(
-              //       color: Theme.of(context).colorScheme.primary,
-              //       borderRadius: BorderRadius.circular(12),
-              //       boxShadow: [
-              //         BoxShadow(
-              //           color: Colors.black.withOpacity(0.2),
-              //           blurRadius: 8,
-              //           offset: const Offset(2, 2),
-              //         ),
-              //       ],
-              //     ),
-              //     child: IconButton(
-              //       color: Colors.white,
-              //       iconSize: 28,
-              //       icon: const Icon(Icons.add),
-              //       tooltip: 'Tambah Pekerjaan',
-              //       onPressed: () async {
-              //         final result = await Get.to(() => const AddDetailJob());
-              //         if (result == true) {
-              //           jobC.resetDetailJobState();
-              //           await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-              //         } else {
-              //           jobC.resetDetailJobState();
-              //           await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
-              //         }
-              //       },
-              //     ),
-              //   ),
-              // ),
+              Positioned(
+                bottom: 16,
+                right: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    color: Colors.white,
+                    iconSize: 28,
+                    icon: const Icon(Icons.add),
+                    tooltip: 'Tambah Pekerjaan',
+                    onPressed: () async {
+                      final result = await Get.to(() => const AddDetailJob());
+                      if (result == true) {
+                        jobC.resetDetailJobState();
+                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                      } else {
+                        jobC.resetDetailJobState();
+                        await jobC.fetchJobs(null, int.parse(authC.currentUser.value!.id),null,null,null,null,{'order':'created_at','order_by':'asc'});
+                      }
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         ),

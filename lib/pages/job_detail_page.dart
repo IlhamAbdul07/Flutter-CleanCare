@@ -253,7 +253,7 @@ class JobDetailPage extends StatelessWidget {
                             items: jobList
                                 .map(
                                   (job) => DropdownMenuItem(
-                                    enabled: !isAdmin,
+                                    enabled: isAdmin,
                                     value: job,
                                     child: Text(job),
                                   ),
@@ -300,7 +300,7 @@ class JobDetailPage extends StatelessWidget {
                                 .map(
                                   (t) => DropdownMenuItem(
                                     value: t.name,
-                                    enabled: !isAdmin,
+                                    enabled: isAdmin,
                                     child: Text(t.name),
                                   ),
                                 )
@@ -339,7 +339,7 @@ class JobDetailPage extends StatelessWidget {
                                 .map(
                                   (floor) => DropdownMenuItem(
                                     value: floor,
-                                    enabled: !isAdmin,
+                                    enabled: isAdmin,
                                     child: Text(floor),
                                   ),
                                 )

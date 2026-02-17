@@ -122,95 +122,107 @@ class AdminHomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Obx(
-                      () => ElevatedButton(
-                        onPressed: () => jobC.setCleaning(true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: jobC.isCleaning.value
-                              ? AppColor.primaryBlue
-                              : Colors.grey[300],
-                          foregroundColor: jobC.isCleaning.value
-                              ? Colors.white
-                              : Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                      () => Expanded(
+                        flex: 3,
+                        child: ElevatedButton(
+                          onPressed: () => jobC.setCleaning(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: jobC.isCleaning.value
+                                ? AppColor.primaryBlue
+                                : Colors.grey[300],
+                            foregroundColor: jobC.isCleaning.value
+                                ? Colors.white
+                                : Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
+                          child: const Text('Cleaning'),
                         ),
-                        child: const Text('Cleaning'),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Obx(
-                      () => ElevatedButton(
-                        onPressed: () => jobC.setCleaning(false),
+                      () => Expanded(
+                        flex: 3,
+                        child: ElevatedButton(
+                          onPressed: () => jobC.setCleaning(false),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: !jobC.isCleaning.value
+                                ? AppColor.primaryBlue
+                                : Colors.grey[300],
+                            foregroundColor: !jobC.isCleaning.value
+                                ? Colors.white
+                                : Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Non-Cleaning', maxLines: 2, textAlign: TextAlign.center,),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await Get.to(
+                            () => NotFinishedDetailPage(),
+                          );
+                          if (result == true) {
+                            jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          } else {
+                            jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: !jobC.isCleaning.value
-                              ? AppColor.primaryBlue
-                              : Colors.grey[300],
+                          backgroundColor: Colors.orange,
                           foregroundColor: !jobC.isCleaning.value
                               ? Colors.white
                               : Colors.black,
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(50, 40),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text('Non-Cleaning'),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final result = await Get.to(
-                          () => NotFinishedDetailPage(),
-                        );
-                        if (result == true) {
-                          jobC.refreshDashboard(
-                            jobC.isCleaning.value,
-                            jobC.selectedDate.value,
-                          );
-                        } else {
-                          jobC.refreshDashboard(
-                            jobC.isCleaning.value,
-                            jobC.selectedDate.value,
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: !jobC.isCleaning.value
-                            ? Colors.white
-                            : Colors.black,
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(50, 40),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        child: const Icon(
+                          Icons.timelapse,
+                          color: Colors.white,
+                          size: 25,
                         ),
                       ),
-                      child: const Icon(
-                        Icons.timelapse,
-                        color: Colors.white,
-                        size: 25,
-                      ),
                     ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () async {
-                        final result = await Get.to(() => TaskManagementPage());
-                        if (result == true) {
-                          jobC.refreshDashboard(
-                            jobC.isCleaning.value,
-                            jobC.selectedDate.value,
-                          );
-                        } else {
-                          jobC.refreshDashboard(
-                            jobC.isCleaning.value,
-                            jobC.selectedDate.value,
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.workspaces_filled),
-                      color: Colors.black,
-                      tooltip: 'Task Type',
+                    
+                    Expanded(
+                      flex: 1,
+                      child: IconButton(
+                        onPressed: () async {
+                          final result = await Get.to(() => TaskManagementPage());
+                          if (result == true) {
+                            jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          } else {
+                            jobC.refreshDashboard(
+                              jobC.isCleaning.value,
+                              jobC.selectedDate.value,
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.workspaces_filled),
+                        color: Colors.black,
+                        tooltip: 'Task Type',
+                      ),
                     ),
                   ],
                 ),

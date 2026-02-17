@@ -179,6 +179,38 @@ class RegisterStepFormWidget extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            if (c.employeeData.value?.roleId == '2')...[
+                              // Penempatan
+                              const SizedBox(height: 15),
+                              Text(
+                                'Penempatan',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                height: 50,
+                                child: TextField(
+                                  controller: TextEditingController(
+                                    text: c.employeeData.value?.floor,
+                                  ),
+                                  readOnly: true,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
                             // Email
                             const SizedBox(height: 15),
                             Text(

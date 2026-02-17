@@ -9,6 +9,7 @@ class UserSingle {
   final String roleName;
   final String createdAt;
   final String updatedAt;
+  final String floor;
 
   const UserSingle({
     required this.id,
@@ -21,6 +22,7 @@ class UserSingle {
     required this.roleName,
     required this.createdAt,
     required this.updatedAt,
+    required this.floor,
   });
 
   factory UserSingle.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class UserSingle {
       roleName: json['role']?['name'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
+      floor: json['floor'] ?? '',
     );
   }
 
@@ -50,6 +53,7 @@ class UserSingle {
       'role_name': roleName,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'floor': floor,
     };
   }
 }

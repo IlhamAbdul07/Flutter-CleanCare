@@ -15,9 +15,12 @@ class AddUserPage extends StatelessWidget {
     final nameC = TextEditingController();
     final roleList = ['Cleaning Service','Supervisor'];
     final pestControlList = ['No','Yes'];
+    final floorList = List.generate(20, (index) => 'Lantai ${index + 1}');
 
     final selectedRole = 'Cleaning Service'.obs;
     final selectedPestControl = 'No'.obs;
+    final selectedFloor = ''.obs;
+    selectedFloor.value = floorList.first;
 
     final formKey = GlobalKey<FormState>();
 
@@ -127,6 +130,37 @@ class AddUserPage extends StatelessWidget {
                     if (val != null) selectedPestControl.value = val;
                   },
                 ),
+                const SizedBox(height: 18),
+                Text(
+                  'Penempatan',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.left,
+                ),
+                ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButtonFormField<String>(
+                    initialValue: selectedFloor.value,
+                    isExpanded: true,
+                    alignment: AlignmentDirectional.centerStart,
+                    menuMaxHeight: 200,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
+                    items: floorList
+                        .map(
+                          (floor) => DropdownMenuItem(
+                            value: floor,
+                            child: Text(floor),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) {
+                      if (val != null) selectedFloor.value = val;
+                    },
+                  ),
+                ),
               ],
               const SizedBox(height: 24),
               SizedBox(
@@ -145,7 +179,7 @@ class AddUserPage extends StatelessWidget {
                   ),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final result = await userC.create(idC.text, (selectedPestControl.value == 'Yes' ? '${nameC.text} (Pest Control)' : nameC.text), (selectedRole.value == 'Supervisor' ? 1 : 2));
+                      final result = await userC.create(idC.text, (selectedPestControl.value == 'Yes' ? '${nameC.text} (Pest Control)' : nameC.text), (selectedRole.value == 'Supervisor' ? 1 : 2), selectedFloor.value);
                       if (result == 'ok'){
                         Get.back(result: true);
                         AppSnackbarRaw.success('Berhasil tambah user! \nSilakan regitrasi terlebih dahulu.');

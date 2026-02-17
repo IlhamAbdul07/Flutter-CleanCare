@@ -100,6 +100,16 @@ class DetailUserPage extends StatelessWidget {
                           subtitle: Text(user.name.contains('(Pest Control)') ? 'Yes' : 'No', style: TextStyle(fontSize: 14)),
                         ),
                         const Divider(height: 5,),
+                        ListTile(
+                          leading: Icon(Icons.layers, color: AppColor.primary),
+                          title: const Text(
+                            'Penempatan',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.left,
+                          ),
+                          subtitle: Text(user.floor, style: TextStyle(fontSize: 14)),
+                        ),
+                        const Divider(height: 5,),
                       ],
                       ListTile(
                         leading: Icon(Icons.email, color: AppColor.primary),

@@ -118,11 +118,12 @@ class UserController extends GetxController {
     }
   }
 
-  Future<String> create(String numberId, String name, int roleId) async {
+  Future<String> create(String numberId, String name, int roleId, String floor) async {
     final Map<String, dynamic> data = {
       'number_id': numberId,
       'name': name,
       'role_id': roleId,
+      'floor': floor,
     };
 
     final response = await ApiService.handleUser(

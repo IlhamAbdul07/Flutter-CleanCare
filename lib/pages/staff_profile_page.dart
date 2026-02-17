@@ -70,6 +70,14 @@ class StaffProfilePage extends StatelessWidget {
             subtitle: Text(authC.currentUser.value!.name.contains('(Pest Control)') ? 'Yes' : 'No'),
           ),
           ListTile(
+            leading: const Icon(Icons.layers),
+            title: const Text(
+              'Penempatan',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(authC.currentUser.value!.floor),
+          ),
+          ListTile(
             leading: const Icon(Icons.email),
             title: const Text(
               'Email',

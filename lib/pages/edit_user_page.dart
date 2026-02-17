@@ -22,8 +22,11 @@ class EditUserPage extends StatelessWidget {
     final emailC = TextEditingController();
     final roleList = ['Cleaning Service','Supervisor'];
     final pestControlList = ['No','Yes'];
+    final floorList = List.generate(20, (index) => 'Lantai ${index + 1}');
     final selectedRole = 'Cleaning Service'.obs;
     final selectedPestControl = 'No'.obs;
+    final selectedFloor = ''.obs;
+    selectedFloor.value = floorList.first;
 
     if (currentUser == null){
       return const Center(child: Text("no user"));
@@ -34,6 +37,7 @@ class EditUserPage extends StatelessWidget {
       selectedPestControl.value = currentUser.name.contains('(Pest Control)') ? 'Yes' : 'No';
       emailC.text = currentUser.email;
       userC.profilC.value = currentUser.profile;
+      selectedFloor.value = currentUser.floor;
     }
 
     final formKey = GlobalKey<FormState>();
@@ -143,6 +147,37 @@ class EditUserPage extends StatelessWidget {
                   onChanged: (val) {
                     if (val != null) selectedPestControl.value = val;
                   },
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Penempatan',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.left,
+                ),
+                ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButtonFormField<String>(
+                    initialValue: selectedFloor.value,
+                    isExpanded: true,
+                    alignment: AlignmentDirectional.centerStart,
+                    menuMaxHeight: 200,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                    ),
+                    items: floorList
+                        .map(
+                          (floor) => DropdownMenuItem(
+                            value: floor,
+                            child: Text(floor),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) {
+                      if (val != null) selectedFloor.value = val;
+                    },
+                  ),
                 ),
               ],
               const SizedBox(height: 18),
@@ -329,6 +364,9 @@ class EditUserPage extends StatelessWidget {
                         contentType = 'multipart/form-data';
                       }else if (userC.profilC.value.isEmpty && (userC.profilC.value != currentUser.profile)) {
                         data['delete_profile'] = true;
+                      }
+                      if (selectedFloor.value != currentUser.floor) {
+                        data['floor'] = selectedFloor.value;
                       }
                       final result = await userC.updateById(int.parse(userId),data,profile,contentType);
                       if (result == 'ok'){

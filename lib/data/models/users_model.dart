@@ -10,6 +10,7 @@ class Users {
   final String createdAt;
   final String updatedAt;
   final bool verified;
+  final String floor;
 
   const Users({
     required this.id,
@@ -23,6 +24,7 @@ class Users {
     required this.createdAt,
     required this.updatedAt,
     required this.verified,
+    required this.floor,
   });
 
   factory Users.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class Users {
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
       verified: json['verified'] ?? false,
+      floor: json['floor'] ?? '',
     );
   }
 
@@ -54,6 +57,7 @@ class Users {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'verified': verified,
+      'floor': floor,
     };
   }
 }

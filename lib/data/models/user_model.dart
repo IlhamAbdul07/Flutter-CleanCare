@@ -8,6 +8,7 @@ class User {
   final String profileName;
   final String roleId;
   final String roleName;
+  final String floor;
 
   const User({
     required this.id,
@@ -19,6 +20,7 @@ class User {
     required this.profileName,
     required this.roleId,
     required this.roleName,
+    required this.floor,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class User {
       profileName: data['profile_name'] ?? '',
       roleId: data['role']?['id']?.toString() ?? '',
       roleName: data['role']?['name'] ?? '',
+      floor: data['floor'] ?? '',
     );
   }
 
@@ -48,6 +51,7 @@ class User {
       'profile_name': profileName,
       'role_id': roleId,
       'role_name': roleName,
+      'floor': floor,
     };
   }
 }

@@ -5,6 +5,7 @@ class Register {
   final String createdAt;
   final String roleId;
   final String roleName;
+  final String floor;
 
   const Register({
     required this.id,
@@ -13,6 +14,7 @@ class Register {
     required this.createdAt,
     required this.roleId,
     required this.roleName,
+    required this.floor,
   });
 
   factory Register.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Register {
       createdAt: json['created_at'] ?? '',
       roleId: json['role']?['id']?.toString() ?? '',
       roleName: json['role']?['name'] ?? '',
+      floor: json['floor'] ?? '',
     );
   }
 
@@ -34,6 +37,7 @@ class Register {
       'created_at': createdAt,
       'role_id': roleId,
       'role_name': roleName,
+      'floor': floor,
     };
   }
 }

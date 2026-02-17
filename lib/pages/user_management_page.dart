@@ -214,7 +214,23 @@ class UserManagementPage extends StatelessWidget {
                     : null,
         ),
         title: Text(user.name),
-        subtitle: Text(user.roleName == 'Admin' ? 'Supervisor' : 'Cleaning Service'),
+        subtitle: user.roleName == 'Admin'
+          ? const Text('Supervisor')
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Cleaning Service'),
+                const SizedBox(width: 8),
+                if (user.floor.isNotEmpty) ...[
+                  const Icon(Icons.layers, size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    user.floor.replaceAll('Lantai ', ''),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ],
+            ),
         trailing: const Icon(Icons.arrow_forward_ios_rounded),
         onTap: () async {        
           final result = await Get.to(() => DetailUserPage(userId: user.id));

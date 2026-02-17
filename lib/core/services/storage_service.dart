@@ -44,6 +44,7 @@ class StorageService {
         profileName: userJson['profile_name'] ?? '',
         roleId: userJson['role_id'] ?? '',
         roleName: userJson['role_name'] ?? '',
+        floor: userJson['floor'] ?? '',
       );
     }
     return null;

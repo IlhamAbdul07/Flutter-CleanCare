@@ -33,7 +33,7 @@ class AddDetailJob extends StatelessWidget {
 
     nameC.text = userLogin!.name;
     selectedJob.value = jobList.first;
-    selectedFloor.value = floorList.first;
+    selectedFloor.value = userLogin.floor;
     taskLoading.value = true;
     Future.microtask(() {
       jobTypeC.setFilterTask(selectedJob.value == 'Cleaning' ? 1 : 2).then((
@@ -161,29 +161,32 @@ class AddDetailJob extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.left,
                 ),
-                ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButtonFormField<String>(
-                    initialValue: selectedFloor.value,
-                    isExpanded: true,
-                    alignment: AlignmentDirectional.centerStart,
-                    menuMaxHeight: 200,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                AbsorbPointer(
+                  absorbing: true,
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: DropdownButtonFormField<String>(
+                      initialValue: selectedFloor.value,
+                      isExpanded: true,
+                      alignment: AlignmentDirectional.centerStart,
+                      menuMaxHeight: 200,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
                       ),
+                      items: floorList
+                          .map(
+                            (floor) => DropdownMenuItem(
+                              value: floor,
+                              child: Text(floor),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) selectedFloor.value = val;
+                      },
                     ),
-                    items: floorList
-                        .map(
-                          (floor) => DropdownMenuItem(
-                            value: floor,
-                            child: Text(floor),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null) selectedFloor.value = val;
-                    },
                   ),
                 ),
                 //
